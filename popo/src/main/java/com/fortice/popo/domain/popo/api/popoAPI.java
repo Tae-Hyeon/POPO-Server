@@ -2,6 +2,7 @@ package com.fortice.popo.domain.popo.api;
 
 import com.fortice.popo.domain.model.Popo;
 import com.fortice.popo.domain.popo.dao.PopoDAO;
+import com.fortice.popo.global.aop.annotation.LogTime;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -19,6 +20,7 @@ public class popoAPI {
     @Autowired
     PopoDAO popoDAO;
 
+    @LogTime
     @RequestMapping(method= RequestMethod.GET)
     public @ResponseBody Object getPopoList() {
         List<Popo> popoList = popoDAO.findAll();
@@ -26,6 +28,7 @@ public class popoAPI {
         return popoList;
     }
 
+    @LogTime
     @RequestMapping(value = "/{popoId}", method= RequestMethod.GET)
     public @ResponseBody Object getPopo(@PathVariable("popoId") Long popoId) {
         Optional<Popo> popo = popoDAO.findById(popoId);
@@ -39,6 +42,11 @@ public class popoAPI {
         return newPopo;
     }
 
-    @RequestMapping(value = "/popo/{popoId}", method = RequestMethod.PATCH)
-    public @ResponseBody Object changeBackground(@ResponseBody)
+    @RequestMapping(value = "/popo/{popoId}/{changer}", method = RequestMethod.PATCH)
+    public @ResponseBody Object changeBackground(@PathVariable("popoId") Long popoId, @PathVariable("changer") String changer) {
+        JSONObject json = new JSONObject();
+        json.put("code", 200);
+        json.put("message", changer + " 수정");
+        return json;
+    }
 }
