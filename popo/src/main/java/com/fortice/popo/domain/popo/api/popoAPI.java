@@ -3,6 +3,7 @@ package com.fortice.popo.domain.popo.api;
 import com.fortice.popo.domain.model.Popo;
 import com.fortice.popo.domain.popo.dao.PopoDAO;
 import com.fortice.popo.global.aop.annotation.LogTime;
+import com.fortice.popo.global.common.response.Response;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -30,10 +31,12 @@ public class popoAPI {
 
     @LogTime
     @RequestMapping(value = "/{popoId}", method= RequestMethod.GET)
-    public @ResponseBody Object getPopo(@PathVariable("popoId") Long popoId) {
+    public @ResponseBody Object getPopo(@PathVariable("popoId") Long popoId) throws Exception {
         Optional<Popo> popo = popoDAO.findById(popoId);
-
-        return popo;
+        if(popoId > 3)
+            throw new Exception("popo found");
+        Response<Popo> response = new Response<Popo>(200, "포포 조회 성공", popo.get());
+        return response;
     }
 
     @RequestMapping(value = "/popo", method = RequestMethod.POST)
