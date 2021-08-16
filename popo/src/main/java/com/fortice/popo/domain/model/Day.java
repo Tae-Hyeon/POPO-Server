@@ -1,11 +1,12 @@
-package com.fortice.popo.domain.tracker.dao;
+package com.fortice.popo.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
 
 @Data
-@Getter @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -17,7 +18,7 @@ public class Day {
     private Integer id;
 
     @Column(name = "popo_id", nullable = false)
-    private Integer popoId;
+    private Long popoId;
 
     @Column(name = "date", nullable = false)
     private java.sql.Date date;
@@ -28,9 +29,11 @@ public class Day {
     @Column(name = "image", nullable = false)
     private String image;
 
+    @JsonIgnore
     @Column(name = "created_at", nullable = false)
     private java.sql.Timestamp createdAt;
 
+    @JsonIgnore
     @Column(name = "updated_at", nullable = false)
     private java.sql.Timestamp updatedAt;
 }

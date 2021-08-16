@@ -1,4 +1,4 @@
-package com.fortice.popo.domain.tracker.dao;
+package com.fortice.popo.domain.model;
 
 import lombok.*;
 
@@ -6,7 +6,6 @@ import javax.persistence.*;
 
 @Data
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -15,7 +14,7 @@ public class OptionContent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "option_id")

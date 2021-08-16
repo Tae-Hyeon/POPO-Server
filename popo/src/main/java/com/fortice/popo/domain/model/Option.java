@@ -1,12 +1,11 @@
-package com.fortice.popo.domain.tracker.dao;
+package com.fortice.popo.domain.model;
 
-import com.fortice.popo.domain.popo.dao.Popo;
 import lombok.*;
+
 import javax.persistence.*;
 
 @Data
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -14,7 +13,7 @@ import javax.persistence.*;
 public class Option {
     @Id
     @Column(name = "id")
-    private Integer id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "popo_id")
@@ -26,4 +25,5 @@ public class Option {
 
     @Column(name = "order", nullable = false)
     private Integer order;
+
 }

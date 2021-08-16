@@ -1,5 +1,6 @@
-package com.fortice.study.domain.user.dao;
+package com.fortice.popo.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -9,7 +10,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
-@Getter @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -18,23 +19,27 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(nullable = false, unique = true)
     private String email;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
 
+    @JsonIgnore
     @Column(nullable = false)
     private String salt;
 
     private String phone;
 
+    @JsonIgnore
     @Column(nullable = false)
     @CreationTimestamp
     private Date createdTime;
 
+    @JsonIgnore
     @Column(nullable = false)
     @UpdateTimestamp
     private Date updatedTime;
