@@ -5,25 +5,28 @@ import lombok.*;
 import javax.persistence.*;
 
 @Data
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "options")
 public class Option {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private int id;
 
-    @ManyToOne
-    @JoinColumn(name = "popo_id")
-    //@Column(name = "popo_id", nullable = false)
-    private Popo popo;
+//    @ManyToOne
+//    @JoinColumn(name = "popo_id")
+//    private Popo popo;
+    @Column(name = "popo_id", nullable = false)
+    private int popoId;
 
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "order", nullable = false)
-    private Integer order;
+    @Column(name = "`order`", nullable = false)
+    private int order;
 
 }

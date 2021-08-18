@@ -3,6 +3,7 @@ package com.fortice.popo.domain.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
@@ -10,37 +11,39 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name="users")
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id")
+    private int id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @JsonIgnore
-    @Column(nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
     @JsonIgnore
-    @Column(nullable = false)
+    @Column(name = "salt", nullable = false)
     private String salt;
 
     private String phone;
 
     @JsonIgnore
-    @Column(nullable = false)
+    @Column(name = "created_at", nullable = false)
     @CreationTimestamp
-    private Date createdTime;
+    private Date createdAt;
 
     @JsonIgnore
-    @Column(nullable = false)
+    @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
-    private Date updatedTime;
+    private Date updatedAt;
 }

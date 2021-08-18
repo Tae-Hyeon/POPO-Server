@@ -2,56 +2,54 @@ package com.fortice.popo.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import javax.persistence.*;
 import java.util.Date;
 
 @Data
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "popos")
 public class Popo {
     @Id
-    @Column(name = "id")
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
 //    @ManyToOne
 //    @JoinColumn(name = "user_id")
 //    private User user;
     @Column(name = "user_id", nullable = false)
-    private Long userId;
+    private int userId;
 
     @Column(name = "concept_id", nullable = false)
-    private Integer conceptId;
+    private int conceptId;
 
-    @Column(name = "category", nullable = false)
-    private Byte category;
+    @Column(name = "category", columnDefinition = "TINYINT", nullable = false)
+    private int category;
 
-    @Column(name = "type", nullable = false)
-    private Byte type;
+    @Column(name = "`type`", columnDefinition = "TINYINT", nullable = false)
+    private int type;
 
-    @Column(name = "order", nullable = false)
-    private Byte order;
+    @Column(name = "`order`", columnDefinition = "TINYINT", nullable = false)
+    private int order;
 
-    @Column(name = "background", nullable = false)
+    @Column(name = "background")
+    @ColumnDefault("/image/background.png")
     private String background;
 
     @JsonIgnore
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at")
+    @CreationTimestamp
     private Date createdAt;
 
     @JsonIgnore
-    @Column(name = "updated_at", nullable = false)
+    @Column(name = "updated_at")
+    @UpdateTimestamp
     private Date updatedAt;
-
-    public Popo(long id, long userId, int conceptId, Byte category, Byte type, Byte order, String background) {
-        this.id = id;
-        this.userId = userId;
-        this.conceptId = conceptId;
-        this.category = category;
-        this.type = type;
-        this.order = order;
-        this.background = background;
-    }
 }

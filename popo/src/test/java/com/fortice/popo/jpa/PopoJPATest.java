@@ -40,9 +40,8 @@ public class PopoJPATest {
     }
 
     public void getPopoByIdTest(){
-        Optional<Popo> popo = popoDAO.findById(1L);
-        Byte one = 1, zero = 0;
-        Popo mockPopo = new Popo(1L, 1L, one, one, zero, one, "/image/background.png");
+        Optional<Popo> popo = popoDAO.findById(1l);
+        Popo mockPopo = Popo.builder().id(1).build();
 
         Assertions.assertEquals(mockPopo, popo);
     }

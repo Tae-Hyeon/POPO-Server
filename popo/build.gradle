@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.fortice'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.4-SNAPSHOT'
 sourceCompatibility = '11'
 
 configurations {
@@ -18,10 +18,19 @@ repositories {
 	mavenCentral()
 }
 
+bootJar {
+	jar.enabled = true
+}
+jar {
+	manifest {
+		attributes "Main-Class": "com.fortice.popo.PopoApplication"
+	}
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	// implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.projectlombok:lombok:1.18.20'
 	implementation group: 'org.json', name: 'json', version: '20210307'
