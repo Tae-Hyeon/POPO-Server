@@ -30,8 +30,7 @@ public class popoAPI {
      */
     @RequestMapping(method= RequestMethod.GET)
     public @ResponseBody Object getPopoList() {
-        Response<List<Popo>> response = popoCrudService.getPopoList();
-        return response;
+        return popoCrudService.getPopoList();
     }
 
     /**
@@ -41,19 +40,22 @@ public class popoAPI {
      * @throws Exception
      */
     @RequestMapping(value = "/{popoId}", method= RequestMethod.GET)
-    public @ResponseBody Response getPopo(@PathVariable("popoId") Long popoId) throws Exception {
-        Response<Popo> response = popoCrudService.getPopo(popoId);
-        return response;
+    public @ResponseBody Response getPopo(@PathVariable("popoId") Integer popoId) throws Exception {
+        return popoCrudService.getPopo(popoId);
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public @ResponseBody Response insertPopo(@RequestBody PopoCreateRequest request) {
-        Response<Object> response = popoCrudService.insertPopo(request);
-        return response;
+    public @ResponseBody Response insertPopo(@Valid @RequestBody PopoCreateRequest request) {
+        return popoCrudService.insertPopo(request);
     }
 
-//    @RequestMapping(value = "/popo/{popoId}/{changer}", method = RequestMethod.PATCH)
-//    public @ResponseBody Response changeBackground(@PathVariable("popoId") Long popoId, @PathVariable("changer") String changer) {
-//        return json;
-//    }
+    @RequestMapping(path = "/{popoId}", method = RequestMethod.DELETE)
+    public @ResponseBody Response deletePopo(@PathVariable Integer popoId) {
+        return popoCrudService.deletePopo(popoId);
+    }
+
+    @RequestMapping(value = "/popo/{popoId}/background", method = RequestMethod.PATCH)
+    public @ResponseBody Response changeBackground(@PathVariable("popoId") Integer popoId, @RequestBody String background) {
+        return popoCrudService.changeBackground(popoId, background);
+    }
 }

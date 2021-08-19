@@ -10,5 +10,5 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Repository
-public interface PopoDAO extends JpaRepository<Popo, Long> {
+public interface PopoDAO extends JpaRepository<Popo, Integer> {
 }

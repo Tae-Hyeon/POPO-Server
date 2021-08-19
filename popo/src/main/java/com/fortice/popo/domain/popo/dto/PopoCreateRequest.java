@@ -15,6 +15,13 @@ public class PopoCreateRequest {
     private int order;
     private List<OptionDTO> options;
 
+    public boolean isOptionEmpty() {
+        if(options.isEmpty())
+            return true;
+        else
+            return false;
+    }
+
     public Popo getPopo() {
         Popo returnPopo = Popo.builder()
                 .userId(1)
@@ -25,6 +32,7 @@ public class PopoCreateRequest {
                 .build();
         return returnPopo;
     }
+
     public List<Option> getOptions(int popoId) {
         List<Option> returnOptions = new ArrayList<>();
         for(OptionDTO option : this.options)

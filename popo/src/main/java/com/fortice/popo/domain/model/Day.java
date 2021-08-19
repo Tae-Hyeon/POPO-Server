@@ -19,7 +19,7 @@ public class Day {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private Integer id;
 
     @Column(name = "popo_id", nullable = false)
     private int popoId;
