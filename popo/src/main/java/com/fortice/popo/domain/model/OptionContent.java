@@ -5,16 +5,17 @@ import lombok.*;
 import javax.persistence.*;
 
 @Data
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "option_contents")
 public class OptionContent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private Integer id;
 
     @ManyToOne
     @JoinColumn(name = "option_id")

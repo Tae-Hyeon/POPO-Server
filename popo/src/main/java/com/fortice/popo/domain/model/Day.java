@@ -2,13 +2,17 @@ package com.fortice.popo.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Data
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
+@Getter @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "days")
 public class Day {
@@ -18,22 +22,24 @@ public class Day {
     private Integer id;
 
     @Column(name = "popo_id", nullable = false)
-    private Long popoId;
+    private int popoId;
 
     @Column(name = "date", nullable = false)
-    private java.sql.Date date;
+    private Date date;
 
     @Column(name = "percent", nullable = false)
-    private Float percent;
+    private float percent;
 
     @Column(name = "image", nullable = false)
     private String image;
 
     @JsonIgnore
     @Column(name = "created_at", nullable = false)
-    private java.sql.Timestamp createdAt;
+    @CreationTimestamp
+    private Date createdAt;
 
     @JsonIgnore
     @Column(name = "updated_at", nullable = false)
-    private java.sql.Timestamp updatedAt;
+    @UpdateTimestamp
+    private Date updatedAt;
 }
