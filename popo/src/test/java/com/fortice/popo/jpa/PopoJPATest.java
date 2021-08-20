@@ -40,7 +40,7 @@ public class PopoJPATest {
     }
 
     public void getPopoByIdTest(){
-        Optional<Popo> popo = popoDAO.findById(1l);
+        Optional<Popo> popo = popoDAO.findById(1);
         Popo mockPopo = Popo.builder().id(1).build();
 
         //Assertions.assertEquals(mockPopo, popo);
