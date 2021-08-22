@@ -18,6 +18,6 @@ class PopoApplicationTests {
 	void contextLoads() throws Exception {
 //		popoJPATest.getListTest();
 //		popoJPATest.getPopoByIdTest();
-		popoAPITest.getListPopoTest();
+//		popoAPITest.getListPopoTest();
 	}
 }
