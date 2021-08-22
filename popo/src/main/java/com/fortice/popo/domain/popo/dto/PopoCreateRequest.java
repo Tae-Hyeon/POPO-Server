@@ -2,9 +2,7 @@ package com.fortice.popo.domain.popo.dto;
 
 import com.fortice.popo.domain.model.Option;
 import com.fortice.popo.domain.model.Popo;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.boot.context.properties.bind.DefaultValue;
 
@@ -12,6 +10,9 @@ import javax.validation.constraints.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Getter @Setter
 public class PopoCreateRequest {

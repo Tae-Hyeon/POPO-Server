@@ -2,8 +2,10 @@ package com.fortice.popo.jpa;
 
 import com.fortice.popo.domain.model.Popo;
 import com.fortice.popo.domain.popo.dao.PopoDAO;
+import com.fortice.popo.domain.popo.dto.PopoCreateRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
