@@ -6,6 +6,9 @@ import com.fortice.popo.domain.popo.dao.OptionDAO;
 import com.fortice.popo.domain.popo.dao.PopoDAO;
 import com.fortice.popo.domain.popo.dto.PopoCreateRequest;
 import com.fortice.popo.global.common.response.Response;
+import com.fortice.popo.global.error.exception.NoPermissionException;
+import com.fortice.popo.global.error.exception.NotFoundDataException;
+import com.fortice.popo.global.util.Checker;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,12 +25,14 @@ public class PopoCrudService {
     @Autowired
     OptionDAO OptionDAO;
 
-    private Response returnResponse(int code, String message, Object data) {
+    Checker checker = new Checker();
+
+    private Response returnResponse(int code, String message, Object data) throws Exception{
         Response<Object> response = new Response<>(code, message, data);
         return response;
     }
 
-    public Response getPopoList() {
+    public Response getPopoList() throws Exception{
         List<Popo> popoList = popoDAO.findAll();
 
         return returnResponse(200, "포포 리스트 조회 성공", popoList);
@@ -35,14 +40,15 @@ public class PopoCrudService {
 
     public Response getPopo(Integer popoId) throws Exception{
         Optional<Popo> popo = popoDAO.findById(popoId);
-        if(popoId > 3)
-            throw new Exception("popo not found");
+
+        checkPermission(popo, 1);
 
         return returnResponse(200, "포포 조회 성공", popo.get());
     }
 
-    public Response insertPopo(PopoCreateRequest request) {
+    public Response insertPopo(PopoCreateRequest request) throws Exception{
         Popo newPopo = request.getPopo();
+        newPopo.printProperties();
         newPopo = popoDAO.save(newPopo);
         if(!request.isOptionEmpty()) {
             List<Option> newOptions = request.getOptions(newPopo.getId());
@@ -52,17 +58,28 @@ public class PopoCrudService {
         return returnResponse(200, "포포 생성 성공", newPopo);
     }
 
-    public Response deletePopo(Integer popoId) {
+    public Response deletePopo(Integer popoId) throws Exception{
+        Optional<Popo> popo = popoDAO.findById(popoId);
+        checkPermission(popo, 1);
         popoDAO.deleteById(popoId);
 
         return returnResponse(200, "포포 삭제 성공", null);
     }
 
-    public Response changeBackground(Integer popoId, String background){
+    public Response changeBackground(Integer popoId, String background) throws Exception {
         Optional<Popo> popo = popoDAO.findById(popoId);
+
+        checkPermission(popo, 1);
+
         popo.get().setBackground(background);
         popoDAO.save(popo.get());
 
         return returnResponse(200, "포포 배경 수정 성공", null);
+    }
+
+    private void checkPermission(Optional<Popo> popo, int userId) throws Exception{
+        popo.orElseThrow(NotFoundDataException::new);
+        if(!checker.checkOwner(popo.get().getUserId(), userId))
+            throw new NoPermissionException();
     }
 }

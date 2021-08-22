@@ -29,4 +29,10 @@ public class Option {
     @Column(name = "`order`", nullable = false)
     private int order;
 
+    public void printProperties(){
+        System.out.println(id);
+        System.out.println(popoId);
+        System.out.println(name);
+        System.out.println(order);
+    }
 }

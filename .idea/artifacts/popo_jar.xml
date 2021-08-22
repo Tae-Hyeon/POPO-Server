@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="popo:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/popo_jar</output-path>
+    <root id="archive" name="popo.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/popo/build/generated/sources/annotationProcessor/java/main/META-INF/MANIFEST.MF" />
+      </element>
+    </root>
+  </artifact>
+</component>

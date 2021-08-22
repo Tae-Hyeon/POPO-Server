@@ -40,8 +40,7 @@ public class Popo {
     private int order;
 
     @Column(name = "background")
-    @ColumnDefault("/image/background.png")
-    private String background;
+    private String background = "/image/background.png";
 
     @JsonIgnore
     @Column(name = "created_at")
@@ -52,4 +51,16 @@ public class Popo {
     @Column(name = "updated_at")
     @UpdateTimestamp
     private Date updatedAt;
+
+    public void printProperties(){
+        System.out.println(id);
+        System.out.println(userId);
+        System.out.println(conceptId);
+        System.out.println(category);
+        System.out.println(type);
+        System.out.println(order);
+        System.out.println(background);
+        System.out.println(createdAt);
+        System.out.println(updatedAt);
+    }
 }
