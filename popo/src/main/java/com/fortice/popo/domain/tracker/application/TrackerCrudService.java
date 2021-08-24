@@ -19,7 +19,8 @@ public class TrackerCrudService {
 
     public Response getOneDay(Integer popoId, Integer dayId){
         //List<OptionDTO> options = optionDAO.findOptionsByPopoId(popoId);
-        List<DayResponse> day = trackerDAO.getDayResponseById(dayId);
+        //List<DayResponse> day = trackerDAO.getDayResponseById(dayId);
+        DayResponse day = trackerDAO.getDayTestById(dayId);
 
         Response response = new Response(200, "조회 성공", day);
         return response;

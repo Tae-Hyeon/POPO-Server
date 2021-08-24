@@ -23,7 +23,7 @@ public class PopoCreateRequest {
 
     @Min(0)
     @Max(5)
-    private int type = 0;
+    private int type;
 
     @NotNull(message = "순서를 설정해주세요")
     @Min(value = 1, message = "순서는 최소 1부터 설정 가능합니다")

@@ -40,7 +40,7 @@ public class Popo {
     private int order;
 
     @Column(name = "background")
-    private String background = "/image/background.png";
+    private String background;
 
     @JsonIgnore
     @Column(name = "created_at")
