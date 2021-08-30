@@ -11,4 +11,7 @@ import java.util.List;
 
 @Repository
 public interface PopoDAO extends JpaRepository<Popo, Integer> {
+
+    @Query(value = "SELECT * FROM popos p WHERE p.user_id=:userId", nativeQuery = true)
+    List<Popo> findPoposByUser(Integer userId);
 }

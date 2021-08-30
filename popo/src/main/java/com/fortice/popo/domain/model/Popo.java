@@ -21,11 +21,11 @@ public class Popo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-//    @ManyToOne
-//    @JoinColumn(name = "user_id")
-//    private User user;
-    @Column(name = "user_id", nullable = false)
-    private int userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+//    @JoinColumn(name = "user_id", nullable = false)
+//    private int userId;
 
     @Column(name = "concept_id", nullable = false)
     private int conceptId;
@@ -54,7 +54,6 @@ public class Popo {
 
     public void printProperties(){
         System.out.println(id);
-        System.out.println(userId);
         System.out.println(conceptId);
         System.out.println(category);
         System.out.println(type);

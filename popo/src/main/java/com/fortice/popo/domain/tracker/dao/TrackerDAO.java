@@ -19,8 +19,8 @@ public interface TrackerDAO extends JpaRepository<Day, Integer> {
 //        +" ORDER BY o.`order`")
 //    List<DayResponse> getDayResponseById(@Param("dayId") Integer dayId);
 
-    @Query("SELECT new com.fortice.popo.domain.tracker.dto.DayResponse(d.id , d.date, d.image)"
-    +" FROM days as d"
-    +" WHERE d.id=:dayId")
-    DayResponse getDayTestById(@Param("dayId") Integer dayId);
+//    @Query("SELECT new com.fortice.popo.domain.tracker.dto.DayResponse(d.id , d.date, d.image)"
+//    +" FROM days as d"
+//    +" WHERE d.id=:dayId")
+//    DayResponse getDayTestById(@Param("dayId") Integer dayId);
 }

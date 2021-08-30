@@ -21,8 +21,9 @@ public class Day {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "popo_id", nullable = false)
-    private int popoId;
+    @ManyToOne
+    @JoinColumn(name = "popo_id")
+    private Popo popo;
 
     @Column(name = "date", nullable = false)
     private Date date;

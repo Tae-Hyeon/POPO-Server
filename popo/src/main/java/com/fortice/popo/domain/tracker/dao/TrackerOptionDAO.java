@@ -12,6 +12,6 @@ import java.util.List;
 @Repository
 public interface TrackerOptionDAO extends JpaRepository<Option, Integer> {
 
-    @Query("SELECT id, name FROM options WHERE popo_id=:popoId ORDER BY `order`")
-    List<OptionDTO> findOptionsByPopoId(@Param("popoId") Integer popoId);
+//    @Query("SELECT id, name FROM options WHERE popo_id=:popoId ORDER BY `order`")
+//    List<OptionDTO> findOptionsByPopoId(@Param("popoId") Integer popoId);
 }

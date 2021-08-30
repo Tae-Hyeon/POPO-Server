@@ -64,6 +64,7 @@ public class PopoAPITest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(result -> {
                     MockHttpServletResponse response = result.getResponse();
+                    System.out.println(response.getContentAsString());
                     //log.info("test");
                 });
     }
