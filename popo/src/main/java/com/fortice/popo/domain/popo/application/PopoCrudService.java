@@ -33,7 +33,7 @@ public class PopoCrudService {
     }
 
     public Response getPopoList() throws Exception{
-        List<Popo> popoList = popoDAO.findAll();
+        List<Popo> popoList = popoDAO.findPoposByUser(1);
 
         return returnResponse(200, "포포 리스트 조회 성공", popoList);
     }
@@ -79,7 +79,7 @@ public class PopoCrudService {
 
     private void checkPermission(Optional<Popo> popo, int userId) throws Exception{
         popo.orElseThrow(NotFoundDataException::new);
-        if(!checker.checkOwner(popo.get().getUserId(), userId))
+        if(!checker.checkOwner(popo.get().getUser().getId(), userId))
             throw new NoPermissionException();
     }
 }

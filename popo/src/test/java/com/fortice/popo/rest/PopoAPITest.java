@@ -25,7 +25,7 @@ import java.util.List;
 
 @AutoConfigureMockMvc
 @NoArgsConstructor
-@Slf4j
+//@Slf4j
 @SpringBootTest
 public class PopoAPITest {
     @Autowired
@@ -64,7 +64,8 @@ public class PopoAPITest {
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(result -> {
                     MockHttpServletResponse response = result.getResponse();
-                    log.info("test");
+                    System.out.println(response.getContentAsString());
+                    //log.info("test");
                 });
     }
 
@@ -78,7 +79,7 @@ public class PopoAPITest {
                 .andExpect(result -> {
                     MockHttpServletResponse response = result.getResponse();
                     System.out.println(response.getContentAsString());
-                    log.info(response.getContentAsString());
+                    //log.info(response.getContentAsString());
                 });
     }
 }
