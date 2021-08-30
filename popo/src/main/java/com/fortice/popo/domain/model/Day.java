@@ -3,6 +3,7 @@ package com.fortice.popo.domain.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fortice.popo.domain.tracker.dto.DayResponse;
 import com.fortice.popo.domain.tracker.dto.OptionContentDTO;
+import com.fortice.popo.domain.tracker.dto.TrackerResponse;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -21,9 +22,20 @@ import java.util.Date;
                 }
         )
 )
+
+@SqlResultSetMapping(
+        name = "TrackerResponseMapping",
+        classes = @ConstructorResult(
+                targetClass = TrackerResponse.class,
+                columns = {
+                        @ColumnResult(name = "id", type = Integer.class),
+                        @ColumnResult(name = "date", type = String.class),
+                        @ColumnResult(name = "image", type = String.class)
+                }
+        )
+)
 @Data
 @Builder
-@Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity

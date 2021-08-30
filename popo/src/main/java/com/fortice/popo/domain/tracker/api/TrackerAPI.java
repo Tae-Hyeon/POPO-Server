@@ -16,9 +16,18 @@ public class TrackerAPI {
     @Autowired
     TrackerCrudService trackerCrudService;
 
+    @RequestMapping(method = RequestMethod.GET)
+    public @ResponseBody Response getTracker(
+            @Valid @Min(value = 1, message = "요청 url의 최소값은 0입니다.")
+            @Pattern(regexp = "^[1-9]+%", message = "숫자만 입력 가능합니다")
+            @PathVariable Integer popoId,
+            @RequestParam String year,
+            @RequestParam String month) throws Exception {
+        return trackerCrudService.getTracker(popoId, year, month);
+    }
+
     @RequestMapping(path = "/{dayId}", method = RequestMethod.GET)
-    public @ResponseBody
-    Response deletePopo(
+    public @ResponseBody Response getOneDay(
             @Valid @Min(value = 1, message = "요청 url의 최소값은 0입니다.")
             @Pattern(regexp = "^[1-9]+%", message = "숫자만 입력 가능합니다")
             @PathVariable Integer popoId,

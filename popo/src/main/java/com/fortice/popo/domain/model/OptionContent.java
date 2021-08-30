@@ -21,7 +21,6 @@ import java.util.Date;
 
 @Data
 @Builder
-@Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity

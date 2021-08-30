@@ -11,8 +11,6 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Getter
-@Setter
 public class OptionDTO {
     @NotBlank(message = "옵션의 이름을 설정해주세요")
     private Integer id;

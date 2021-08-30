@@ -6,10 +6,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Getter
-@Setter
 public class OptionContentDTO {
-    String name;
-    String contents;
-    Integer order;
+    private String name;
+    private String contents;
+    private Integer order;
 }
