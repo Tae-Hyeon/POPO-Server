@@ -1,6 +1,8 @@
 package com.fortice.popo.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fortice.popo.domain.tracker.dto.DayResponse;
+import com.fortice.popo.domain.tracker.dto.OptionContentDTO;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -8,6 +10,17 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.util.Date;
 
+@SqlResultSetMapping(
+        name = "DayResponseMapping",
+        classes = @ConstructorResult(
+                targetClass = DayResponse.class,
+                columns = {
+                        @ColumnResult(name = "id", type = Integer.class),
+                        @ColumnResult(name = "date", type = Date.class),
+                        @ColumnResult(name = "image", type = String.class)
+                }
+        )
+)
 @Data
 @Builder
 @Getter @Setter

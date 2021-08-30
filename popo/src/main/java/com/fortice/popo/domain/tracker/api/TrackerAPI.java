@@ -16,7 +16,7 @@ public class TrackerAPI {
     @Autowired
     TrackerCrudService trackerCrudService;
 
-    @RequestMapping(path = "/{dayId}", method = RequestMethod.DELETE)
+    @RequestMapping(path = "/{dayId}", method = RequestMethod.GET)
     public @ResponseBody
     Response deletePopo(
             @Valid @Min(value = 1, message = "요청 url의 최소값은 0입니다.")

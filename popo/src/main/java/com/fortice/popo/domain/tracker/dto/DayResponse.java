@@ -12,24 +12,14 @@ import java.util.List;
 @Getter
 @Setter
 public class DayResponse {
-    private int id;
+    private Integer id;
     private Date date;
     private String image;
-    private OptionContentDTO options;
+    private List<OptionContentDTO> options;
 
-    public DayResponse (int id, Date date, String image) {
+    public DayResponse(Integer id, Date date, String image) {
         this.id = id;
         this.date = date;
         this.image = image;
-    }
-    public DayResponse (int id, Date date, String image, String name, String content, int order){
-        this.id = id;
-        this.date = date;
-        this.image = image;
-        this.options = OptionContentDTO.builder()
-                .name(name)
-                .content(content)
-                .order(order)
-                .build();
     }
 }

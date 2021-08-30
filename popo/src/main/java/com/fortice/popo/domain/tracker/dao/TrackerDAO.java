@@ -13,14 +13,9 @@ import java.util.Optional;
 @Repository
 public interface TrackerDAO extends JpaRepository<Day, Integer> {
 
-//    @Query("SELECT new com.fortice.popo.domain.tracker.dto.DayResponse(d.id , date, image, name, contents, `order`)"
-//        +" FROM days as d, option_contents as c, options as o"
-//        +" WHERE d.id=:dayId AND d.id=c.day_id AND o.id=c.option_id"
-//        +" ORDER BY o.`order`")
-//    List<DayResponse> getDayResponseById(@Param("dayId") Integer dayId);
-
-//    @Query("SELECT new com.fortice.popo.domain.tracker.dto.DayResponse(d.id , d.date, d.image)"
-//    +" FROM days as d"
-//    +" WHERE d.id=:dayId")
-//    DayResponse getDayTestById(@Param("dayId") Integer dayId);
+    @Query(value = "SELECT new com.fortice.popo.domain.tracker.dto.DayResponse("
+        +" d.id, d.date, d.image)"
+        +" FROM Day d"
+        +" WHERE d.id=:dayId")
+    DayResponse getDayResponseById(@Param("dayId") Integer dayId);
 }

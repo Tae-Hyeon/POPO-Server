@@ -10,6 +10,6 @@ import lombok.*;
 @Setter
 public class OptionContentDTO {
     String name;
-    String content;
-    int order;
+    String contents;
+    Integer order;
 }
