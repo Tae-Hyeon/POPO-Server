@@ -1,7 +1,13 @@
 package com.fortice.popo.domain.tracker.application;
 
+import com.fortice.popo.domain.model.Day;
+import com.fortice.popo.domain.model.Option;
+import com.fortice.popo.domain.model.OptionContent;
+import com.fortice.popo.domain.model.Popo;
+import com.fortice.popo.domain.popo.dao.OptionDAO;
 import com.fortice.popo.domain.tracker.dao.TrackerContentDAO;
 import com.fortice.popo.domain.tracker.dao.TrackerDAO;
+import com.fortice.popo.domain.tracker.dto.CreateDayRequest;
 import com.fortice.popo.domain.tracker.dto.DayResponse;
 import com.fortice.popo.domain.tracker.dto.OptionContentDTO;
 import com.fortice.popo.domain.tracker.dto.TrackerResponse;
@@ -11,13 +17,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @Transactional
 public class TrackerCrudService {
+    @Autowired
+    OptionDAO optionDAO;
     @Autowired
     TrackerDAO trackerDAO;
     @Autowired
@@ -44,6 +54,43 @@ public class TrackerCrudService {
         day.setOptions(options);
 
         Response response = new Response(200, "조회 성공", day);
+        return response;
+    }
+
+    public Response insertOneDay(Integer popoId, CreateDayRequest request) throws Exception{
+        Date date = new SimpleDateFormat("YYYY-mm-dd").parse(request.getDate());
+        Optional<Day> day = trackerDAO.findByDate(date);
+        if(day.isPresent())
+        {
+            Response response = new Response(400, "이미 생성한 날짜입니다.", null);
+            return response;
+        }
+
+        Day newDay = Day.builder()
+                .popo(Popo.builder().id(popoId).build())
+                .date(date)
+                .build();
+
+        newDay = trackerDAO.save(newDay);
+
+        List<Option> options = optionDAO.getIdsByPopo(popoId);
+
+        for(Option option : options) {
+            OptionContent newContents = OptionContent.builder()
+                    .option(option)
+                    .day(newDay)
+                    .contents("")
+                    .build();
+
+            newContents = trackerContentDAO.save(newContents);
+        }
+        Response response = new Response(200, "조회 성공", null);
+        return response;
+    }
+
+    public Response patchContents() throws Exception{
+
+        Response response = new Response(200, "조회 성공", null);
         return response;
     }
 }

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,11 +22,11 @@ public interface TrackerDAO extends JpaRepository<Day, Integer> {
             +" SUBSTRING(d.date, 1, 7)=:dateFormat")
     List<TrackerResponse> getTrackerResponseById(@Param("popoId") Integer popoId,@Param("dateFormat") String dateFormat);
 
-//    List<TrackerResponse> findDaysByPopoStartsWith(@Param("popoId") Integer popoId, String dateFormat);
-
     @Query(value = "SELECT new com.fortice.popo.domain.tracker.dto.DayResponse("
         +" d.id, d.date, d.image)"
         +" FROM Day d"
         +" WHERE d.id=:dayId")
     DayResponse getDayResponseById(@Param("dayId") Integer dayId);
+
+    Optional<Day> findByDate(Date date);
 }

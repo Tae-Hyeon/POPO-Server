@@ -1,5 +1,17 @@
 package com.fortice.popo.domain.tracker.dto;
 
-public class CreateDayRequest {
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
+public class CreateDayRequest {
+    Integer popoId;
+    String date;
 }
