@@ -42,4 +42,8 @@ public class OptionContent {
 
     @Column(name = "contents")
     private String contents;
+
+    public Integer getOwnerId(){
+        return this.day.getPopo().getUser().getId();
+    }
 }

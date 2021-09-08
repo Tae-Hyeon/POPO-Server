@@ -1,9 +1,6 @@
 package com.fortice.popo.domain.tracker.application;
 
-import com.fortice.popo.domain.model.Day;
-import com.fortice.popo.domain.model.Option;
-import com.fortice.popo.domain.model.OptionContent;
-import com.fortice.popo.domain.model.Popo;
+import com.fortice.popo.domain.model.*;
 import com.fortice.popo.domain.popo.dao.OptionDAO;
 import com.fortice.popo.domain.tracker.dao.TrackerContentDAO;
 import com.fortice.popo.domain.tracker.dao.TrackerDAO;
@@ -12,6 +9,8 @@ import com.fortice.popo.domain.tracker.dto.DayResponse;
 import com.fortice.popo.domain.tracker.dto.OptionContentDTO;
 import com.fortice.popo.domain.tracker.dto.TrackerResponse;
 import com.fortice.popo.global.common.response.Response;
+import com.fortice.popo.global.error.exception.NoPermissionException;
+import com.fortice.popo.global.error.exception.NotFoundDataException;
 import com.fortice.popo.global.util.Checker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,11 +59,8 @@ public class TrackerCrudService {
     public Response insertOneDay(Integer popoId, CreateDayRequest request) throws Exception{
         Date date = new SimpleDateFormat("YYYY-mm-dd").parse(request.getDate());
         Optional<Day> day = trackerDAO.findByDate(date);
-        if(day.isPresent())
-        {
-            Response response = new Response(400, "이미 생성한 날짜입니다.", null);
-            return response;
-        }
+
+        checkPermissionDay(day, 1);
 
         Day newDay = Day.builder()
                 .popo(Popo.builder().id(popoId).build())
@@ -88,9 +84,29 @@ public class TrackerCrudService {
         return response;
     }
 
-    public Response patchContents() throws Exception{
+    public Response patchContents(Integer contentId, String contents) throws Exception{
+        Optional<OptionContent> content = trackerContentDAO.findById(contentId);
 
-        Response response = new Response(200, "조회 성공", null);
+        checkPermissionContent(content, 1);
+
+        content.get().setContents(contents);
+        trackerContentDAO.save(content.get());
+
+        Response response = new Response(200, "수정 성공", null);
         return response;
+    }
+
+    //TODO: 권한 체크 AOP로 만들기, 리펙토링 필요
+    //Overloading: 제네릭 특징 참고해서 짜기
+    private void checkPermissionContent(Optional<OptionContent> content, int userId) throws Exception{
+        content.orElseThrow(NotFoundDataException::new);
+        if(!checker.checkOwner(content.get().getOwnerId(), userId))
+            throw new NoPermissionException();
+    }
+
+    private void checkPermissionDay(Optional<Day> day, int userId) throws Exception{
+        day.orElseThrow(NotFoundDataException::new);
+        if(!checker.checkOwner(day.get().getOwnerId(), userId))
+            throw new NoPermissionException();
     }
 }

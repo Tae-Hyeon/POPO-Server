@@ -63,4 +63,8 @@ public class Popo {
         System.out.println(createdAt);
         System.out.println(updatedAt);
     }
+
+    public Integer getOwnerId(){
+        return this.user.getId();
+    }
 }

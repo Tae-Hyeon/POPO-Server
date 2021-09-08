@@ -47,8 +47,12 @@ public class TrackerAPI {
         return trackerCrudService.insertOneDay(popoId, request);
     }
 
-    @RequestMapping(path = "/{dayId}/contents", method = RequestMethod.PATCH)
-    public @ResponseBody Response patchContents() throws Exception {
-        return trackerCrudService.patchContents();
+    @RequestMapping(path = "/{dayId}/contents/{contentId}", method = RequestMethod.PATCH)
+    public @ResponseBody Response patchContents(
+            @Valid @Min(value = 1, message = "요청 url의 최소값은 0입니다.")
+            @Pattern(regexp = "^[1-9]+%", message = "숫자만 입력 가능합니다")
+            @PathVariable Integer contentId,
+            @Valid @RequestBody String contents) throws Exception {
+        return trackerCrudService.patchContents(contentId, contents);
     }
 }

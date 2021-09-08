@@ -68,4 +68,8 @@ public class Day {
     @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     private Date updatedAt;
+
+    public Integer getOwnerId(){
+        return this.popo.getUser().getId();
+    }
 }

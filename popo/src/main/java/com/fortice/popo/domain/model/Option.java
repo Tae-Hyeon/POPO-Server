@@ -33,4 +33,8 @@ public class Option {
         System.out.println(name);
         System.out.println(order);
     }
+
+    public Integer getOwnerId(){
+        return this.popo.getUser().getId();
+    }
 }
