@@ -96,8 +96,6 @@ public class TrackerCrudService {
         return response;
     }
 
-    //TODO: 권한 체크 AOP로 만들기, 리펙토링 필요
-    //Overloading: 제네릭 특징 참고해서 짜기
     private void checkPermissionContent(Optional<OptionContent> content, int userId) throws Exception{
         content.orElseThrow(NotFoundDataException::new);
         if(!checker.checkOwner(content.get().getOwnerId(), userId))
