@@ -2,6 +2,7 @@ package com.fortice.popo.domain.popo.dto;
 
 import com.fortice.popo.domain.model.Option;
 import com.fortice.popo.domain.model.Popo;
+import com.fortice.popo.domain.model.User;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -23,7 +24,7 @@ public class PopoCreateRequest {
 
     @Min(0)
     @Max(5)
-    private int type = 0;
+    private int type;
 
     @NotNull(message = "순서를 설정해주세요")
     @Min(value = 1, message = "순서는 최소 1부터 설정 가능합니다")
@@ -42,7 +43,7 @@ public class PopoCreateRequest {
 
     public Popo getPopo() {
         Popo returnPopo = Popo.builder()
-                .userId(1)
+                .user(User.builder().id(1).build())
                 .conceptId(1)
                 .category(this.category)
                 .type(this.type)
@@ -56,7 +57,7 @@ public class PopoCreateRequest {
         for(OptionDTO option : this.options)
         {
             Option newOption = Option.builder()
-                    .popoId(popoId)
+                    .popo(Popo.builder().id(1).build())
                     .name(option.getName())
                     .order(option.getOrder())
                     .build();

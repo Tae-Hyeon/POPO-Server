@@ -1,6 +1,9 @@
 package com.fortice.popo.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fortice.popo.domain.tracker.dto.DayResponse;
+import com.fortice.popo.domain.tracker.dto.OptionContentDTO;
+import com.fortice.popo.domain.tracker.dto.TrackerResponse;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -8,9 +11,31 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.util.Date;
 
+@SqlResultSetMapping(
+        name = "DayResponseMapping",
+        classes = @ConstructorResult(
+                targetClass = DayResponse.class,
+                columns = {
+                        @ColumnResult(name = "id", type = Integer.class),
+                        @ColumnResult(name = "date", type = Date.class),
+                        @ColumnResult(name = "image", type = String.class)
+                }
+        )
+)
+
+@SqlResultSetMapping(
+        name = "TrackerResponseMapping",
+        classes = @ConstructorResult(
+                targetClass = TrackerResponse.class,
+                columns = {
+                        @ColumnResult(name = "id", type = Integer.class),
+                        @ColumnResult(name = "date", type = String.class),
+                        @ColumnResult(name = "image", type = String.class)
+                }
+        )
+)
 @Data
 @Builder
-@Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -21,8 +46,9 @@ public class Day {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "popo_id", nullable = false)
-    private int popoId;
+    @ManyToOne
+    @JoinColumn(name = "popo_id")
+    private Popo popo;
 
     @Column(name = "date", nullable = false)
     private Date date;
@@ -42,4 +68,8 @@ public class Day {
     @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     private Date updatedAt;
+
+    public Integer getOwnerId(){
+        return this.popo.getUser().getId();
+    }
 }

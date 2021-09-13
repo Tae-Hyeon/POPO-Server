@@ -1,6 +1,7 @@
 package com.fortice.popo.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fortice.popo.domain.tracker.dto.DayResponse;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
@@ -11,7 +12,6 @@ import java.util.Date;
 
 @Data
 @Builder
-@Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -21,11 +21,12 @@ public class Popo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-//    @ManyToOne
-//    @JoinColumn(name = "user_id")
-//    private User user;
-    @Column(name = "user_id", nullable = false)
-    private int userId;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+//    @JoinColumn(name = "user_id", nullable = false)
+//    private int userId;
 
     @Column(name = "concept_id", nullable = false)
     private int conceptId;
@@ -40,7 +41,7 @@ public class Popo {
     private int order;
 
     @Column(name = "background")
-    private String background = "/image/background.png";
+    private String background;
 
     @JsonIgnore
     @Column(name = "created_at")
@@ -54,7 +55,6 @@ public class Popo {
 
     public void printProperties(){
         System.out.println(id);
-        System.out.println(userId);
         System.out.println(conceptId);
         System.out.println(category);
         System.out.println(type);
@@ -62,5 +62,9 @@ public class Popo {
         System.out.println(background);
         System.out.println(createdAt);
         System.out.println(updatedAt);
+    }
+
+    public Integer getOwnerId(){
+        return this.user.getId();
     }
 }

@@ -6,7 +6,6 @@ import javax.persistence.*;
 
 @Data
 @Builder
-@Getter @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -17,11 +16,11 @@ public class Option {
     @Column(name = "id")
     private Integer id;
 
-//    @ManyToOne
-//    @JoinColumn(name = "popo_id")
-//    private Popo popo;
-    @Column(name = "popo_id", nullable = false)
-    private int popoId;
+    @ManyToOne
+    @JoinColumn(name = "popo_id")
+    private Popo popo;
+//    @Column(name = "popo_id", nullable = false)
+//    private int popoId;
 
     @Column(name = "name", nullable = false)
     private String name;
@@ -31,8 +30,11 @@ public class Option {
 
     public void printProperties(){
         System.out.println(id);
-        System.out.println(popoId);
         System.out.println(name);
         System.out.println(order);
+    }
+
+    public Integer getOwnerId(){
+        return this.popo.getUser().getId();
     }
 }
