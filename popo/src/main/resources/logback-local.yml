@@ -1,0 +1,9 @@
+logging:
+  file:
+    path: /logs/local
+    name: test.log  # 로깅 파일
+    max-history: 7 # 로그 파일 삭제 주기
+    max-size: 10MB  # 로그 파일 하나당 최대 파일 사이즈
+  level:  # package 별로 로깅 레벨을 지정
+    com.fortice.popo : error
+    root: info
