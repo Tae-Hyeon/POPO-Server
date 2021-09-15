@@ -8,10 +8,12 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 
 @Api("POPO API")
 @RestController
@@ -23,7 +25,6 @@ public class popoAPI {
      * 포포 리스트 조회 API
      * @return 특정 계정의 포포 리스트
      */
-
     @ApiOperation("포포 리스트 조회")
     @RequestMapping(method= RequestMethod.GET)
     public @ResponseBody Response getPopoList() throws Exception {
@@ -42,6 +43,13 @@ public class popoAPI {
             @Pattern(regexp = "^[1-9]+%", message = "숫자만 입력 가능합니다")
             @PathVariable("popoId") Integer popoId) throws Exception {
         return popoCrudService.getPopo(popoId);
+    }
+
+    @RequestMapping(method = RequestMethod.POST)
+    // @ApiOperation(value = "포포 추가")
+    public @ResponseBody Response setDefaultPopo(
+            @RequestPart List<MultipartFile> backgrounds) throws Exception{
+        return popoCrudService.setDefaultPopo(backgrounds);
     }
 
     @RequestMapping(method = RequestMethod.POST)

@@ -2,6 +2,7 @@ package com.fortice.popo.domain.popo.application;
 
 import com.fortice.popo.domain.model.Option;
 import com.fortice.popo.domain.model.Popo;
+import com.fortice.popo.domain.model.User;
 import com.fortice.popo.domain.popo.dao.OptionDAO;
 import com.fortice.popo.domain.popo.dao.PopoDAO;
 import com.fortice.popo.domain.popo.dto.PopoCreateRequest;
@@ -13,7 +14,10 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +48,28 @@ public class PopoCrudService {
         checkPermission(popo, 1);
 
         return returnResponse(200, "포포 조회 성공", popo.get());
+    }
+
+    public Response setDefaultPopo(List<MultipartFile> backgrounds) throws Exception{
+        List<Popo> newPopos = new ArrayList<>();
+        for(int i = 1; i <= 12; i++)
+        {
+            MultipartFile background = backgrounds.get(i - 1);
+            File dest = new File("./popo/")
+            Popo popo = Popo.builder()
+                    .conceptId(1)
+                    .background("")
+                    .category(-1)
+                    .order(i)
+                    .user(User.builder().id(1).build())
+                    .build();
+
+            newPopos.add(popo);
+        }
+
+        popoDAO.saveAll(newPopos);
+
+        return returnResponse(200, "포포 생성 성공", newPopos);
     }
 
     public Response insertPopo(PopoCreateRequest request) throws Exception{

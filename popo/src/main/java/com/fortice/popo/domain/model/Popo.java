@@ -34,9 +34,6 @@ public class Popo {
     @Column(name = "category", columnDefinition = "TINYINT", nullable = false)
     private int category;
 
-    @Column(name = "`type`", columnDefinition = "TINYINT", nullable = false)
-    private int type;
-
     @Column(name = "`order`", columnDefinition = "TINYINT", nullable = false)
     private int order;
 
@@ -57,7 +54,6 @@ public class Popo {
         System.out.println(id);
         System.out.println(conceptId);
         System.out.println(category);
-        System.out.println(type);
         System.out.println(order);
         System.out.println(background);
         System.out.println(createdAt);
