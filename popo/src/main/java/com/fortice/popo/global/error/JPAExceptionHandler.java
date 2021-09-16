@@ -7,13 +7,13 @@ import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.jar.JarException;
 
-@ControllerAdvice(annotations = {RestController.class, Service.class})
+@RestControllerAdvice(annotations = {RestController.class, Service.class})
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class JPAExceptionHandler {
 

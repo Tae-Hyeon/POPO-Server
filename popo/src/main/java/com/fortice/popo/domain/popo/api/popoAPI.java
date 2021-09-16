@@ -31,19 +31,19 @@ public class popoAPI {
         return popoCrudService.getPopoList();
     }
 
-    /**
-     * 포포 정보 조회 API
-     * @param popoId
-     * @return popoId의 ID 값을 가지는 포포 정보
-     * @throws Exception
-     */
-    @RequestMapping(value = "/{popoId}", method= RequestMethod.GET)
-    public @ResponseBody Response getPopo (
-            @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
-            @Pattern(regexp = "^[1-9]+%", message = "숫자만 입력 가능합니다")
-            @PathVariable("popoId") Integer popoId) throws Exception {
-        return popoCrudService.getPopo(popoId);
-    }
+//    /**
+//     * 포포 정보 조회 API
+//     * @param popoId
+//     * @return popoId의 ID 값을 가지는 포포 정보
+//     * @throws Exception
+//     */
+//    @RequestMapping(value = "/{popoId}", method= RequestMethod.GET)
+//    public @ResponseBody Response getPopo (
+//            @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
+//            @Pattern(regexp = "^[1-9]+%", message = "숫자만 입력 가능합니다")
+//            @PathVariable("popoId") Integer popoId) throws Exception {
+//        return popoCrudService.getPopo(popoId);
+//    }
 
     @RequestMapping(method = RequestMethod.POST)
     // @ApiOperation(value = "포포 추가")
@@ -55,8 +55,8 @@ public class popoAPI {
     @RequestMapping(path = "/{popoId}", method = RequestMethod.POST)
     // @ApiOperation(value = "포포 추가")
     public @ResponseBody Response insertPopo(
-            @Valid @Min(value = 1, message = "요청 url의 최소값은 0입니다.")
-            @Pattern(regexp = "^[1-9]+%", message = "숫자만 입력 가능합니다")
+            @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
+            @Pattern(regexp = "^[1-9]+", message = "숫자만 입력 가능합니다")
             @PathVariable Integer popoId,
             @Valid @RequestBody PopoCreateRequest request) throws Exception{
         return popoCrudService.insertPopo(popoId, request);
@@ -65,8 +65,8 @@ public class popoAPI {
     @RequestMapping(path = "/{popoId}", method = RequestMethod.DELETE)
     // @ApiOperation(value = "포포 삭제")
     public @ResponseBody Response deletePopo(
-            @Valid @Min(value = 1, message = "요청 url의 최소값은 0입니다.")
-            @Pattern(regexp = "^[1-9]+%", message = "숫자만 입력 가능합니다")
+            @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
+            @Pattern(regexp = "^[1-9]+", message = "숫자만 입력 가능합니다")
             @PathVariable Integer popoId) throws Exception {
         return popoCrudService.deletePopo(popoId);
     }
@@ -74,10 +74,11 @@ public class popoAPI {
     @RequestMapping(value = "/popo/{popoId}/background", method = RequestMethod.PATCH)
     // @ApiOperation(value = "포포 배경 수정")
     public @ResponseBody Response changeBackground(
-            @Valid @Min(value = 1, message = "요청 url의 최소값은 0입니다.")
-            @Pattern(regexp = "^[1-9]+%", message = "숫자만 입력 가능합니다")
+            @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
+            @Pattern(regexp = "^[1-9]+", message = "숫자만 입력 가능합니다")
             @PathVariable("popoId") Integer popoId,
             @RequestBody String background) throws Exception {
         return popoCrudService.changeBackground(popoId, background);
     }
+
 }

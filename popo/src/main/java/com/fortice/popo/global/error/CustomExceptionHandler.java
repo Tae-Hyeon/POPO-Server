@@ -17,21 +17,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class CustomExceptionHandler {
 
     @ExceptionHandler(NullParamsException.class)
-    protected ErrorResponse NullParamsException(NullParamsException e) {
+    protected ErrorResponse handleNullParamsException(NullParamsException e) {
         System.out.println(e);
         final ErrorResponse errorResponse = new ErrorResponse(400, "요청 내용이 비어있습니다.(Body is null)");
         return errorResponse;
     }
 
     @ExceptionHandler(NoPermissionException.class)
-    protected ErrorResponse NoPermissionException(NoPermissionException e) {
+    protected ErrorResponse handleNoPermissionException(NoPermissionException e) {
         System.out.println(e);
         final ErrorResponse errorResponse = new ErrorResponse(403, "소유자가 아니거나, 권한이 없습니다.");
         return errorResponse;
     }
 
     @ExceptionHandler(MultipartFileTypeRestrictException.class)
-    protected ErrorResponse MultipartFileTypeRestrictException(MultipartFileTypeRestrictException e) {
+    protected ErrorResponse handleMultipartFileTypeRestrictException(MultipartFileTypeRestrictException e) {
         System.out.println(e);
         final ErrorResponse errorResponse = new ErrorResponse(403, "파일의 타입이 옳지 않습니다.(이미지 외 불가능)");
         return errorResponse;

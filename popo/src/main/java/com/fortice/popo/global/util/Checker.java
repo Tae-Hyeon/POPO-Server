@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Optional;
 
 @NoArgsConstructor
 public class Checker {
@@ -25,30 +26,29 @@ public class Checker {
         return "0" + Integer.toString(date);
     }
 
-    public void checkPermission(Popo popo, int userId) throws Exception{
-        if(popo == null)
+    public void checkEmpty(Object data) throws Exception{
+        if(data == null)
             throw new NotFoundDataException();
+    }
+
+    public void checkPermission(Popo popo, int userId) throws Exception{
         if(!checkOwner(popo.getOwnerId(), userId))
             throw new NoPermissionException();
     }
 
     public void checkPermission(Day day, int userId) throws Exception{
-        if(day == null)
-            throw new NotFoundDataException();
         if(!checkOwner(day.getOwnerId(), userId))
             throw new NoPermissionException();
     }
 
     public void checkPermission(OptionContent contents, int userId) throws Exception{
-        if(contents == null)
-            throw new NotFoundDataException();
         if(!checkOwner(contents.getOwnerId(), userId))
             throw new NoPermissionException();
     }
 
     public boolean checkFileType(MultipartFile file) throws Exception{
         String mimeType = file.getContentType();
-        if(mimeType.split("\\.")[0] != "image")
+        if(!mimeType.split("/")[0].equals("image"))
             throw new MultipartFileTypeRestrictException();
 
         return true;
@@ -57,9 +57,8 @@ public class Checker {
     public boolean checkFileType(List<MultipartFile> files) throws Exception{
         for(MultipartFile file : files) {
             String mimeType = file.getContentType();
-            if (!mimeType.split("/")[0].equals("image")) {
+            if (!mimeType.split("/")[0].equals("image"))
                 throw new MultipartFileTypeRestrictException();
-            }
         }
 
         return true;

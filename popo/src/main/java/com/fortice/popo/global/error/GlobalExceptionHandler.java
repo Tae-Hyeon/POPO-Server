@@ -46,54 +46,53 @@ public class GlobalExceptionHandler {
     }
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     protected ErrorResponse handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-        System.out.println(e);
+        e.printStackTrace();
         final ErrorResponse errorResponse = new ErrorResponse(500, "요청의 파라미터 타입이 일치하지 않습니다. 관리자에게 문의바랍니다.");
         return errorResponse;
     }
     @ExceptionHandler(MissingPathVariableException.class)
     protected ErrorResponse handleMissingPathVariableException(MissingPathVariableException e) {
-        System.out.println(e);
+        e.printStackTrace();
         final ErrorResponse errorResponse = new ErrorResponse(500, "공백이 포함된 url로 인해 오류가 발생했습니다.");
         return errorResponse;
     }
     @ExceptionHandler(NullPointerException.class)
     protected ErrorResponse handleNullPointerException(NullPointerException e) {
-        System.out.println(e);
+        e.printStackTrace();
         final ErrorResponse errorResponse = new ErrorResponse(500, "서버에서 비어있는 객체를 호출했습니다. 관리자에게 문의바랍니다.");
         return errorResponse;
     }
 
     @ExceptionHandler(BindException.class)
     protected ErrorResponse handleBindException(BindException e) {
-        System.out.println(e);
+        e.printStackTrace();
         final ErrorResponse errorResponse = new ErrorResponse(500, "특정 포트가 이미 사용중입니다. 관리자에게 문의바랍니다.");
         return errorResponse;
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     protected ErrorResponse handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
-        System.out.println(e);
+        e.printStackTrace();
         final ErrorResponse errorResponse = new ErrorResponse(501, "특정 요청 메소드를 지원하지 않습니다. 관리자에게 문의바랍니다.");
         return errorResponse;
     }
 
     @ExceptionHandler(AccessDeniedException.class)
     protected ErrorResponse handleAccessDeniedException(AccessDeniedException e) {
-        System.out.println(e);
+        e.printStackTrace();
         final ErrorResponse errorResponse = new ErrorResponse(403, "서버에서 허용되지 않는 데이터에 접근을 시도했습니다. 관리자에게 문의바랍니다.");
         return errorResponse;
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     protected ErrorResponse handleNoHandlerFoundException(NoHandlerFoundException e) {
-        System.out.println(e);
+        e.printStackTrace();
         final ErrorResponse errorResponse = new ErrorResponse(404, "서버에서 지원하지 않는 요청입니다. 관리자에게 문의바랍니다.");
         return errorResponse;
     }
 
     @ExceptionHandler(Exception.class)
     protected ErrorResponse handleException(Exception e) {
-        System.out.println(e);
         e.printStackTrace();
         final ErrorResponse errorResponse = new ErrorResponse(500, "서버에서 예상하지 못한 오류가 발생했습니다. 관리자에게 문의바랍니다.");
         return errorResponse;

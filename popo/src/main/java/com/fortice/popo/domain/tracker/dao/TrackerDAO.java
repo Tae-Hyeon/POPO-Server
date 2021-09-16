@@ -29,5 +29,11 @@ public interface TrackerDAO extends JpaRepository<Day, Integer> {
         +" WHERE d.id=:dayId")
     DayResponse getDayResponseById(@Param("dayId") Integer dayId);
 
+    @Query(value = "SELECT d"
+            +" FROM Day d"
+            +" WHERE d.popo.id=:popoId AND"
+            +" d.date=:date")
+    Optional<Day> findByPopoIdAndDate(Integer popoId, Date date);
+
     Optional<Day> findByDate(Date date);
 }

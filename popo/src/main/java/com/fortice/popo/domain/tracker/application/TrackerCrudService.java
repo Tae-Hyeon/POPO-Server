@@ -10,12 +10,16 @@ import com.fortice.popo.global.common.response.Response;
 import com.fortice.popo.global.error.exception.NoPermissionException;
 import com.fortice.popo.global.error.exception.NotFoundDataException;
 import com.fortice.popo.global.util.Checker;
+import com.fortice.popo.global.util.Formatter;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
@@ -34,33 +38,37 @@ public class TrackerCrudService {
     @Autowired
     TrackerContentDAO trackerContentDAO;
 
-    Checker checker;
+    Checker checker = new Checker();
+    Formatter formatter = new Formatter();
+
+    @Value("${path.local.root}")
+    String rootPath;
 
     public Response getTracker(Integer popoId, String year, String month) throws Exception {
-        LocalDate now = LocalDate.now();
 
-        Optional<Popo> popo = popoDAO.findById(popoId);
-        checker.checkPermission(popo.get(), 1);
+        Popo popo = popoDAO.findById(popoId)
+                .orElseThrow(NotFoundDataException::new);
+        checker.checkPermission(popo, 1);
 
-        year = year.isBlank() ? checker.checkDateForm(now.getYear()) : year;
-        month = month.isBlank() ? checker.checkDateForm(now.getMonthValue()) : month;
-
-        String dateFormat = year + "-" + month;
+        String dateFormat = formatter.getDateFormatByYearAndMonth(year, month);
         List<DayDTO> tracker = trackerDAO.getDayDTOById(popoId, dateFormat);
-        int lastDay = LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), 1).getDayOfMonth();
 
-        TrackerResponse data = TrackerResponse.builder()
-                .category(popo.get().getCategory())
+        TrackerResponse trackerResponse = TrackerResponse.builder()
+                .category(popo.getCategory())
                 .build();
-        data.updateTracker(lastDay, tracker);
+        trackerResponse.updateTracker(year, month, tracker);
 
-        Response response = new Response(200, "조회 성공", data);
+        Response response = new Response(200, "조회 성공", trackerResponse);
         return response;
     }
 
     public Response getOneDay(Integer popoId, Integer dayId) throws Exception{
+        //TODO 유저 확인 과정 필요
         List<OptionContentDTO> options = trackerContentDAO.findOptionsByDayId(dayId);
+        checker.checkEmpty(options);
+
         DayResponse day = trackerDAO.getDayResponseById(dayId);
+
         day.setOptions(options);
 
         Response response = new Response(200, "조회 성공", day);
@@ -69,40 +77,82 @@ public class TrackerCrudService {
 
     public Response insertOneDay(Integer popoId, CreateDayRequest request) throws Exception{
         Date date = new SimpleDateFormat("YYYY-mm-dd").parse(request.getDate());
-        Optional<Day> day = trackerDAO.findByDate(date);
-
-        checker.checkPermission(day.get(), 1);
-
-        Day newDay = Day.builder()
+        Day day = trackerDAO.save(Day.builder()
+                .image("")
                 .popo(Popo.builder().id(popoId).build())
                 .date(date)
-                .build();
-
-        newDay = trackerDAO.save(newDay);
+                .build()
+        );
 
         List<Option> options = optionDAO.getIdsByPopo(popoId);
-
         for(Option option : options) {
             OptionContent newContents = OptionContent.builder()
                     .option(option)
-                    .day(newDay)
+                    .day(day)
                     .contents("")
                     .build();
 
             newContents = trackerContentDAO.save(newContents);
         }
-        Response response = new Response(200, "조회 성공", null);
+
+        DayResponse dayResponse = new DayResponse(day,trackerContentDAO.findOptionsByDayId(day.getId()));
+
+        Response response = new Response(200, "조회 성공", dayResponse);
         return response;
     }
 
     public Response patchContents(Integer contentId, String contents) throws Exception{
-        Optional<OptionContent> content = trackerContentDAO.findById(contentId);
+        OptionContent content = trackerContentDAO.findById(contentId)
+                .orElseThrow(NotFoundDataException::new);
 
-        checker.checkPermission(content.get(), 1);
-        content.get().setContents(contents);
-        trackerContentDAO.save(content.get());
+        checker.checkEmpty(content);
+        checker.checkPermission(content, 1);
+
+        content.setContents(contents);
+        trackerContentDAO.save(content);
 
         Response response = new Response(200, "수정 성공", null);
         return response;
+    }
+
+    public Response patchImage(Integer dayId, MultipartFile image) throws Exception{
+        checker.checkFileType(image);
+
+        Day day = trackerDAO.findById(dayId)
+                .orElseThrow(NotFoundDataException::new);
+
+        checker.checkPermission(day, 1);
+
+        File deleteFile = new File(rootPath + day.getImage());
+
+        String path = formatter.getPathWithResourceAndFile("tracker", new Date(), 0, image.getOriginalFilename());
+        File dest = new File(rootPath + path);
+        image.transferTo(dest);
+
+        day.setImage(path);
+        trackerDAO.save(day);
+        if(deleteFile.exists()) {
+            if(deleteFile.delete())
+                System.out.println(deleteFile.getPath() + "사진 삭제 성공");
+            else{
+                //TODO ERROR LOG
+                System.out.println(deleteFile.getPath() + "사진 삭제 실패");
+            }
+        }
+
+        Response response = new Response(200, "수정 성공", path);
+        return response;
+    }
+
+    private void createNewDay(Integer popoId, String date) throws Exception{
+        Day newDay = Day.builder()
+                .popo(Popo.builder().id(popoId).build())
+                .date(new Date(date))
+                .image("")
+                .build();
+
+        newDay = trackerDAO.save(newDay);
+
+
     }
 }

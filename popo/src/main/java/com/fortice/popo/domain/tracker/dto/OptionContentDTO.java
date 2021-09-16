@@ -7,7 +7,9 @@ import lombok.*;
 @AllArgsConstructor
 @Data
 public class OptionContentDTO {
+    private Integer id;
     private String name;
     private String contents;
+    private Integer type;
     private Integer order;
 }
