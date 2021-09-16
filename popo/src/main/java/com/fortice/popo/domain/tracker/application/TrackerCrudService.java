@@ -41,7 +41,7 @@ public class TrackerCrudService {
     Checker checker = new Checker();
     Formatter formatter = new Formatter();
 
-    @Value("${path.local.root}")
+    @Value("${path.root}")
     String rootPath;
 
     public Response getTracker(Integer popoId, String year, String month) throws Exception {
@@ -76,7 +76,10 @@ public class TrackerCrudService {
     }
 
     public Response insertOneDay(Integer popoId, CreateDayRequest request) throws Exception{
-        Date date = new SimpleDateFormat("YYYY-mm-dd").parse(request.getDate());
+        Date date = new SimpleDateFormat("yyyy-MM-dd").parse(request.getDate());
+        System.out.println(date);
+        System.out.println(request.getDate());
+        System.out.println(date);
         Day day = trackerDAO.save(Day.builder()
                 .image("")
                 .popo(Popo.builder().id(popoId).build())
@@ -131,7 +134,7 @@ public class TrackerCrudService {
 
         day.setImage(path);
         trackerDAO.save(day);
-        if(deleteFile.exists()) {
+        if(deleteFile.exists() && deleteFile.isFile()) {
             if(deleteFile.delete())
                 System.out.println(deleteFile.getPath() + "사진 삭제 성공");
             else{

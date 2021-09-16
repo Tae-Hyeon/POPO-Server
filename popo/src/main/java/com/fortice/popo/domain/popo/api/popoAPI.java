@@ -45,7 +45,7 @@ public class popoAPI {
 //        return popoCrudService.getPopo(popoId);
 //    }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     // @ApiOperation(value = "포포 추가")
     public @ResponseBody Response setDefaultPopo(
             @RequestPart List<MultipartFile> backgrounds) throws Exception{

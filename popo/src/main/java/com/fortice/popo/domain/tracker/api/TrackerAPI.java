@@ -57,7 +57,7 @@ public class TrackerAPI {
         return trackerCrudService.patchContents(contentId, contents);
     }
 
-    @RequestMapping(path = "/{dayId}/image", method = RequestMethod.PATCH)
+    @RequestMapping(path = "/{dayId}/image", method = RequestMethod.PATCH, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public @ResponseBody Response patchImage(
             @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
             @Pattern(regexp = "^[1-9]+", message = "숫자만 입력 가능합니다")

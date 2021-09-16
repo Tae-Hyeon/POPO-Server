@@ -33,7 +33,7 @@ public class PopoCrudService {
     Checker checker = new Checker();
     Formatter formatter = new Formatter();
 
-    @Value("${path.local.root}")
+    @Value("${path.root}")
     String rootPath;
 
     private Response returnResponse(int code, String message, Object data) throws Exception{

@@ -59,6 +59,7 @@ public class PopoCreateRequest {
             Option newOption = Option.builder()
                     .popo(popo)
                     .name(option.getName())
+                    .type(option.getType())
                     .order(option.getOrder())
                     .build();
             returnOptions.add(newOption);
