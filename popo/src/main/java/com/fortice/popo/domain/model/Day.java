@@ -1,6 +1,7 @@
 package com.fortice.popo.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fortice.popo.domain.tracker.dto.DayDTO;
 import com.fortice.popo.domain.tracker.dto.DayResponse;
 import com.fortice.popo.domain.tracker.dto.OptionContentDTO;
 import com.fortice.popo.domain.tracker.dto.TrackerResponse;
@@ -24,9 +25,9 @@ import java.util.Date;
 )
 
 @SqlResultSetMapping(
-        name = "TrackerResponseMapping",
+        name = "DayDTOMapping",
         classes = @ConstructorResult(
-                targetClass = TrackerResponse.class,
+                targetClass = DayDTO.class,
                 columns = {
                         @ColumnResult(name = "id", type = Integer.class),
                         @ColumnResult(name = "date", type = String.class),

@@ -1,6 +1,7 @@
 package com.fortice.popo.global.error;
 
 import com.fortice.popo.global.common.response.ErrorResponse;
+import com.fortice.popo.global.error.exception.MultipartFileTypeRestrictException;
 import com.fortice.popo.global.error.exception.NoPermissionException;
 import com.fortice.popo.global.error.exception.NotFoundDataException;
 import com.fortice.popo.global.error.exception.NullParamsException;
@@ -26,6 +27,13 @@ public class CustomExceptionHandler {
     protected ErrorResponse NoPermissionException(NoPermissionException e) {
         System.out.println(e);
         final ErrorResponse errorResponse = new ErrorResponse(403, "소유자가 아니거나, 권한이 없습니다.");
+        return errorResponse;
+    }
+
+    @ExceptionHandler(MultipartFileTypeRestrictException.class)
+    protected ErrorResponse MultipartFileTypeRestrictException(MultipartFileTypeRestrictException e) {
+        System.out.println(e);
+        final ErrorResponse errorResponse = new ErrorResponse(403, "파일의 타입이 옳지 않습니다.(이미지 외 불가능)");
         return errorResponse;
     }
 }

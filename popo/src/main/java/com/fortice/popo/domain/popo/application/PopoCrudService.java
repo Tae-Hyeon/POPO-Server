@@ -10,14 +10,17 @@ import com.fortice.popo.global.common.response.Response;
 import com.fortice.popo.global.error.exception.NoPermissionException;
 import com.fortice.popo.global.error.exception.NotFoundDataException;
 import com.fortice.popo.global.util.Checker;
+import com.fortice.popo.global.util.Formatter;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +33,10 @@ public class PopoCrudService {
     OptionDAO OptionDAO;
 
     Checker checker = new Checker();
+    Formatter formatter = new Formatter();
+
+    @Value("${path.local.root}")
+    String rootPath;
 
     private Response returnResponse(int code, String message, Object data) throws Exception{
         Response<Object> response = new Response<>(code, message, data);
@@ -45,17 +52,22 @@ public class PopoCrudService {
     public Response getPopo(Integer popoId) throws Exception{
         Optional<Popo> popo = popoDAO.findById(popoId);
 
-        checkPermission(popo, 1);
+        checker.checkPermission(popo.get(), 1);
 
         return returnResponse(200, "포포 조회 성공", popo.get());
     }
 
     public Response setDefaultPopo(List<MultipartFile> backgrounds) throws Exception{
+        checker.checkFileType(backgrounds);
+        Date today = new Date();
         List<Popo> newPopos = new ArrayList<>();
         for(int i = 1; i <= 12; i++)
         {
             MultipartFile background = backgrounds.get(i - 1);
-            File dest = new File("./popo/")
+            String path = "/popo/" + formatter.DateFileNameFormat(today) + "-" + i + "-" + background.getOriginalFilename();
+            File dest = new File(path);
+            background.transferTo(dest);
+
             Popo popo = Popo.builder()
                     .conceptId(1)
                     .background("")
@@ -72,12 +84,12 @@ public class PopoCrudService {
         return returnResponse(200, "포포 생성 성공", newPopos);
     }
 
-    public Response insertPopo(PopoCreateRequest request) throws Exception{
-        Popo newPopo = request.getPopo();
+    public Response insertPopo(Integer popoId, PopoCreateRequest request) throws Exception{
+        Popo newPopo = request.getPopo(popoId);
         newPopo.printProperties();
         newPopo = popoDAO.save(newPopo);
         if(!request.isOptionEmpty()) {
-            List<Option> newOptions = request.getOptions(newPopo.getId());
+            List<Option> newOptions = request.getOptions(popoId);
             OptionDAO.saveAll(newOptions);
         }
 
@@ -86,7 +98,7 @@ public class PopoCrudService {
 
     public Response deletePopo(Integer popoId) throws Exception{
         Optional<Popo> popo = popoDAO.findById(popoId);
-        checkPermission(popo, 1);
+        checker.checkPermission(popo.get(), 1);
         popoDAO.deleteById(popoId);
 
         return returnResponse(200, "포포 삭제 성공", null);
@@ -95,17 +107,11 @@ public class PopoCrudService {
     public Response changeBackground(Integer popoId, String background) throws Exception {
         Optional<Popo> popo = popoDAO.findById(popoId);
 
-        checkPermission(popo, 1);
+        checker.checkPermission(popo.get(), 1);
 
         popo.get().setBackground(background);
         popoDAO.save(popo.get());
 
         return returnResponse(200, "포포 배경 수정 성공", null);
-    }
-
-    private void checkPermission(Optional<Popo> popo, int userId) throws Exception{
-        popo.orElseThrow(NotFoundDataException::new);
-        if(!checker.checkOwner(popo.get().getUser().getId(), userId))
-            throw new NoPermissionException();
     }
 }

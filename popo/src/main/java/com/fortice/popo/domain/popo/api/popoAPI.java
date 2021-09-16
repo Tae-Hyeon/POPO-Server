@@ -52,11 +52,14 @@ public class popoAPI {
         return popoCrudService.setDefaultPopo(backgrounds);
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(path = "/{popoId}", method = RequestMethod.POST)
     // @ApiOperation(value = "포포 추가")
     public @ResponseBody Response insertPopo(
+            @Valid @Min(value = 1, message = "요청 url의 최소값은 0입니다.")
+            @Pattern(regexp = "^[1-9]+%", message = "숫자만 입력 가능합니다")
+            @PathVariable Integer popoId,
             @Valid @RequestBody PopoCreateRequest request) throws Exception{
-        return popoCrudService.insertPopo(request);
+        return popoCrudService.insertPopo(popoId, request);
     }
 
     @RequestMapping(path = "/{popoId}", method = RequestMethod.DELETE)

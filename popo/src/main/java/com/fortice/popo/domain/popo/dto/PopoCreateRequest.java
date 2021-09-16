@@ -17,6 +17,10 @@ import java.util.List;
 @Data
 @Getter @Setter
 public class PopoCreateRequest {
+    @Min(value = 1, message = "요청 url의 최소값은 0입니다.")
+    @Pattern(regexp = "^[1-9]+%", message = "숫자만 입력 가능합니다")
+    private int id;
+
     @NotNull(message = "카테고리를 설정해주세요")
     @Min(value = 1, message = "카테고리는 최소 1부터 설정 가능합니다")
     @Max(value = 9, message = "카테고리는 최대 9까지 설정 가능합니다")
@@ -37,8 +41,9 @@ public class PopoCreateRequest {
             return false;
     }
 
-    public Popo getPopo() {
+    public Popo getPopo(int popoId) {
         Popo returnPopo = Popo.builder()
+                .id(popoId)
                 .user(User.builder().id(1).build())
                 .conceptId(1)
                 .category(this.category)
@@ -47,7 +52,7 @@ public class PopoCreateRequest {
         return returnPopo;
     }
 
-    public List<Option> getOptions(int popoId) {
+    public List<Option> getOptions(Integer popoId) {
         List<Option> returnOptions = new ArrayList<>();
         for(OptionDTO option : this.options)
         {
