@@ -57,10 +57,12 @@ public class TrackerCrudService {
 
         String dateFormat = formatter.getDateFormatByYearAndMonth(year, month);
         List<DayDTO> tracker = trackerDAO.getDayDTOById(popoId, dateFormat);
+        for(DayDTO day : tracker)
+            day.setUri(imageServerURI);
 
         TrackerResponse trackerResponse = TrackerResponse.builder()
                 .category(popo.getCategory())
-                .background(popo.getTracker_image())
+                .background(imageServerURI + popo.getTracker_image())
                 .build();
         trackerResponse.updateTracker(year, month, tracker);
 
@@ -73,11 +75,12 @@ public class TrackerCrudService {
         List<OptionContentDTO> options = trackerContentDAO.findOptionsByDayId(dayId);
         checker.checkEmpty(options);
 
-        DayResponse day = trackerDAO.getDayResponseById(dayId);
+        DayResponse dayResponse = trackerDAO.getDayResponseById(dayId);
 
-        day.setOptions(options);
+        dayResponse.setUri(imageServerURI);
+        dayResponse.setOptions(options);
 
-        Response response = new Response(200, "조회 성공", day);
+        Response response = new Response(200, "조회 성공", dayResponse);
         return response;
     }
 
@@ -105,8 +108,10 @@ public class TrackerCrudService {
             newContents = trackerContentDAO.save(newContents);
         }
 
+        DayResponse dayResponse = new DayResponse(newDay, contents);
+        dayResponse.setUri(imageServerURI);
 
-        Response response = new Response(200, "생성 성공", new DayResponse(newDay, contents));
+        Response response = new Response(200, "생성 성공", dayResponse);
         return response;
     }
 
@@ -138,20 +143,5 @@ public class TrackerCrudService {
 
         Response<String> response = new Response<String>(200, "수정 성공", imageServerURI + path);
         return response;
-    }
-
-    private void createNewDay(Integer popoId, String date) throws Exception{
-        Day newDay = Day.builder()
-                .popo(Popo.builder().id(popoId).build())
-                .date(new Date(date))
-                .image("")
-                .build();
-
-        newDay = trackerDAO.save(newDay);
-    }
-
-    private void setPathWithImageServerURI(List<Day> dayList) {
-        for(Day day : dayList)
-            day.setImage(this.imageServerURI + day.getImage());
     }
 }

@@ -4,6 +4,7 @@ import com.fortice.popo.domain.popo.application.PopoCrudService;
 import com.fortice.popo.domain.popo.dto.PopoCreateRequest;
 import com.fortice.popo.global.common.response.Response;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -26,7 +27,8 @@ public class popoAPI {
      * 포포 리스트 조회 API
      * @return 특정 계정의 포포 리스트
      */
-    @ApiOperation("포포 리스트 조회")
+    @ApiOperation(value = "포포 리스트 조회",
+            notes = "토큰으로 사용자를 판별해 포포 리스트를 반환")
     @RequestMapping(method= RequestMethod.GET)
     public @ResponseBody Response getPopoList() throws Exception {
         return popoCrudService.getPopoList();
@@ -47,6 +49,7 @@ public class popoAPI {
 //    }
 
     @ApiOperation(value = "온보딩 후 첫 컨셉 이미지 세팅")
+    @ApiImplicitParam(name = "backgrounds", value = "포포 컨셉 이미지 12개 파일")
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public @ResponseBody Response setDefaultPopo(
             @RequestPart List<MultipartFile> backgrounds) throws Exception{
@@ -72,8 +75,8 @@ public class popoAPI {
 //        return popoCrudService.deletePopo(popoId);
 //    }
 
-    @RequestMapping(value = "/popo/{popoId}/background", method = RequestMethod.PATCH, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ApiOperation(value = "트래커 배경 수정")
+    @RequestMapping(value = "/{popoId}/background", method = RequestMethod.PATCH, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public @ResponseBody Response changeBackground(
             @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
             @Pattern(regexp = "^[0-9]+", message = "숫자만 입력 가능합니다")

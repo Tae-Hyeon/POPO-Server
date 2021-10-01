@@ -17,7 +17,7 @@ public class SwaggerConfig {
      */
     @Bean
     public Docket popoApi() {
-        return new Docket(DocumentationType.SWAGGER_2)
+        return new Docket(DocumentationType.OAS_30)
                 .useDefaultResponseMessages(false) // 200, 404 등 기본 응답 코드를 노출하지 않음
                 .select()
                 .apis(RequestHandlerSelectors.any())

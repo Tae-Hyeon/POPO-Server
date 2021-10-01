@@ -6,6 +6,7 @@ import com.fortice.popo.domain.model.User;
 import com.fortice.popo.domain.popo.dao.OptionDAO;
 import com.fortice.popo.domain.popo.dao.PopoDAO;
 import com.fortice.popo.domain.popo.dto.PopoCreateRequest;
+import com.fortice.popo.domain.popo.dto.PopoDTO;
 import com.fortice.popo.global.common.response.Response;
 import com.fortice.popo.global.error.exception.NotFoundDataException;
 import com.fortice.popo.global.util.Checker;
@@ -17,11 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -46,9 +44,9 @@ public class PopoCrudService {
     }
 
     public Response getPopoList() throws Exception{
-        List<Popo> popoList = popoDAO.findPoposByUser(1);
-
-        setPathWithImageServerURI(popoList);
+        List<PopoDTO> popoList = popoDAO.findPoposByUserId(1);
+        for(PopoDTO popo : popoList)
+            popo.setUri(imageServerURI);
 
         return returnResponse(200, "포포 리스트 조회 성공", popoList);
     }
@@ -64,6 +62,8 @@ public class PopoCrudService {
 
     public Response setDefaultPopo(List<MultipartFile> backgrounds) throws Exception{
         List<Popo> newPopos = new ArrayList<>();
+        List<PopoDTO> popoResponse = new ArrayList<>();
+
         for(int i = 1; i <= 12; i++)
         {
             Popo popo = Popo.builder()
@@ -74,14 +74,13 @@ public class PopoCrudService {
                     .user(User.builder().id(1).build())
                     .build();
 
+            popoResponse.add(new PopoDTO(popo, imageServerURI));
             newPopos.add(popo);
         }
 
         popoDAO.saveAll(newPopos);
 
-        setPathWithImageServerURI(newPopos);
-
-        return returnResponse(200, "포포 생성 성공", newPopos);
+        return returnResponse(200, "포포 생성 성공", popoResponse);
     }
 
     public Response insertPopo(Integer popoId, PopoCreateRequest request) throws Exception{
@@ -125,10 +124,5 @@ public class PopoCrudService {
         fileUtil.deleteFile(preImagePath);
 
         return returnResponse(200, "포포 배경 수정 성공", imageServerURI + path);
-    }
-
-    private void setPathWithImageServerURI(List<Popo> popoList) {
-        for(Popo popo : popoList)
-            popo.setBackground(this.imageServerURI + popo.getBackground());
     }
 }

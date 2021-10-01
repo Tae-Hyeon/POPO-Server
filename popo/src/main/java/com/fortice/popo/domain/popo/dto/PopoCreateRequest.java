@@ -3,6 +3,8 @@ package com.fortice.popo.domain.popo.dto;
 import com.fortice.popo.domain.model.Option;
 import com.fortice.popo.domain.model.Popo;
 import com.fortice.popo.domain.model.User;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiParam;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.boot.context.properties.bind.DefaultValue;
@@ -15,12 +17,16 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Getter @Setter
 public class PopoCreateRequest {
+
+    @ApiModelProperty(example = "1")
+    @ApiParam(value = "포포 ID")
     @Min(value = 1, message = "요청 url의 최소값은 0입니다.")
     //@Pattern(regexp = "^[1-9]+%", message = "숫자만 입력 가능합니다")
     private int id;
 
+    @ApiModelProperty(example = "1")
+    @ApiParam(value = "포포 카테고리")
     @NotNull(message = "카테고리를 설정해주세요")
     @Min(value = 1, message = "카테고리는 최소 1부터 설정 가능합니다")
     @Max(value = 9, message = "카테고리는 최대 9까지 설정 가능합니다")
