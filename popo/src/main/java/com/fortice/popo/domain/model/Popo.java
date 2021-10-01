@@ -25,9 +25,8 @@ public class Popo {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
-//    @JoinColumn(name = "user_id", nullable = false)
-//    private int userId;
 
+    @JsonIgnore
     @Column(name = "concept_id", nullable = false)
     private int conceptId;
 
@@ -40,6 +39,9 @@ public class Popo {
     @Column(name = "background")
     private String background;
 
+    @Column(name = "tracker_image")
+    private String tracker_image;
+
     @JsonIgnore
     @Column(name = "created_at")
     @CreationTimestamp
@@ -50,16 +52,7 @@ public class Popo {
     @UpdateTimestamp
     private Date updatedAt;
 
-    public void printProperties(){
-        System.out.println(id);
-        System.out.println(conceptId);
-        System.out.println(category);
-        System.out.println(order);
-        System.out.println(background);
-        System.out.println(createdAt);
-        System.out.println(updatedAt);
-    }
-
+    @JsonIgnore
     public Integer getOwnerId(){
         return this.user.getId();
     }

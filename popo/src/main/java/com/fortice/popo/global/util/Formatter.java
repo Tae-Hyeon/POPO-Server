@@ -1,11 +1,14 @@
 package com.fortice.popo.global.util;
 
+import com.fortice.popo.domain.model.Day;
+import com.fortice.popo.domain.model.Popo;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 
 @NoArgsConstructor

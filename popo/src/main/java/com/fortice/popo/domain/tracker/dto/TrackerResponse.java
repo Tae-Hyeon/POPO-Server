@@ -13,6 +13,7 @@ import java.util.List;
 @Data
 public class TrackerResponse {
     private Integer category;
+    private String background;
     private List<DayDTO> tracker;
 
     public void updateTracker(String year, String month, List<DayDTO> tracker)
@@ -24,7 +25,7 @@ public class TrackerResponse {
         for(int i = 1; i <= lastDay; i++) {
             emptySettedTracker.add(
                     DayDTO.builder()
-                    .id(null)
+                    .id(-1)
                     .date(i)
                     .image("")
                     .build()

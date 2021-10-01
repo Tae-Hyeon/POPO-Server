@@ -9,6 +9,7 @@ import com.fortice.popo.domain.popo.dto.PopoCreateRequest;
 import com.fortice.popo.global.common.response.Response;
 import com.fortice.popo.global.error.exception.NotFoundDataException;
 import com.fortice.popo.global.util.Checker;
+import com.fortice.popo.global.util.FileUtil;
 import com.fortice.popo.global.util.Formatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,15 +27,18 @@ import java.util.Optional;
 @Transactional
 public class PopoCrudService {
     @Autowired
-    PopoDAO popoDAO;
+    private PopoDAO popoDAO;
     @Autowired
-    OptionDAO OptionDAO;
+    private OptionDAO OptionDAO;
 
-    Checker checker = new Checker();
-    Formatter formatter = new Formatter();
+    private Checker checker = new Checker();
+    private Formatter formatter = new Formatter();
+    private FileUtil fileUtil = new FileUtil();
 
     @Value("${path.root}")
-    String rootPath;
+    private String rootPath;
+    @Value("${uri.image-server}")
+    private String imageServerURI;
 
     private Response returnResponse(int code, String message, Object data) throws Exception{
         Response<Object> response = new Response<>(code, message, data);
@@ -43,6 +47,8 @@ public class PopoCrudService {
 
     public Response getPopoList() throws Exception{
         List<Popo> popoList = popoDAO.findPoposByUser(1);
+
+        setPathWithImageServerURI(popoList);
 
         return returnResponse(200, "포포 리스트 조회 성공", popoList);
     }
@@ -57,19 +63,12 @@ public class PopoCrudService {
     }
 
     public Response setDefaultPopo(List<MultipartFile> backgrounds) throws Exception{
-        checker.checkFileType(backgrounds);
         List<Popo> newPopos = new ArrayList<>();
-        System.out.println("root path : " + rootPath);
         for(int i = 1; i <= 12; i++)
         {
-            MultipartFile background = backgrounds.get(i - 1);
-            String path = formatter.getPathWithResourceAndFile("popo", new Date(), i, background.getOriginalFilename());
-            File dest = new File(rootPath + path);
-            background.transferTo(dest);
-
             Popo popo = Popo.builder()
                     .conceptId(1)
-                    .background(path)
+                    .background(fileUtil.uploadFile(backgrounds.get(i - 1), "popo", i))
                     .category(-1)
                     .order(i)
                     .user(User.builder().id(1).build())
@@ -79,6 +78,8 @@ public class PopoCrudService {
         }
 
         popoDAO.saveAll(newPopos);
+
+        setPathWithImageServerURI(newPopos);
 
         return returnResponse(200, "포포 생성 성공", newPopos);
     }
@@ -112,15 +113,22 @@ public class PopoCrudService {
         return returnResponse(200, "포포 삭제 성공", null);
     }
 
-    public Response changeBackground(Integer popoId, String background) throws Exception {
+    public Response changeBackground(Integer popoId, MultipartFile background) throws Exception {
         Popo popo = popoDAO.findById(popoId)
                 .orElseThrow(NotFoundDataException::new);
-
         checker.checkPermission(popo, 1);
 
-        popo.setBackground(background);
+        String preImagePath = popo.getTracker_image();
+        String path = fileUtil.uploadFile(background, "tracker", 0);
+        popo.setTracker_image(path);
         popoDAO.save(popo);
+        fileUtil.deleteFile(preImagePath);
 
-        return returnResponse(200, "포포 배경 수정 성공", null);
+        return returnResponse(200, "포포 배경 수정 성공", imageServerURI + path);
+    }
+
+    private void setPathWithImageServerURI(List<Popo> popoList) {
+        for(Popo popo : popoList)
+            popo.setBackground(this.imageServerURI + popo.getBackground());
     }
 }

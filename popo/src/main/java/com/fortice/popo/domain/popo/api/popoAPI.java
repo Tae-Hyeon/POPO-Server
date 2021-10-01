@@ -21,6 +21,7 @@ import java.util.List;
 public class popoAPI {
     @Autowired
     PopoCrudService popoCrudService;
+
     /**
      * 포포 리스트 조회 API
      * @return 특정 계정의 포포 리스트
@@ -45,39 +46,39 @@ public class popoAPI {
 //        return popoCrudService.getPopo(popoId);
 //    }
 
+    @ApiOperation(value = "온보딩 후 첫 컨셉 이미지 세팅")
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
-    // @ApiOperation(value = "포포 추가")
     public @ResponseBody Response setDefaultPopo(
             @RequestPart List<MultipartFile> backgrounds) throws Exception{
         return popoCrudService.setDefaultPopo(backgrounds);
     }
 
-    @RequestMapping(path = "/{popoId}", method = RequestMethod.POST)
-    // @ApiOperation(value = "포포 추가")
-    public @ResponseBody Response insertPopo(
-            @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
-            @Pattern(regexp = "^[1-9]+", message = "숫자만 입력 가능합니다")
-            @PathVariable Integer popoId,
-            @Valid @RequestBody PopoCreateRequest request) throws Exception{
-        return popoCrudService.insertPopo(popoId, request);
-    }
+//    @RequestMapping(path = "/{popoId}", method = RequestMethod.POST)
+//    // @ApiOperation(value = "포포 추가")
+//    public @ResponseBody Response insertPopo(
+//            @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
+//            @Pattern(regexp = "^[0-9]+", message = "숫자만 입력 가능합니다")
+//            @PathVariable Integer popoId,
+//            @Valid @RequestBody PopoCreateRequest request) throws Exception{
+//        return popoCrudService.insertPopo(popoId, request);
+//    }
 
-    @RequestMapping(path = "/{popoId}", method = RequestMethod.DELETE)
-    // @ApiOperation(value = "포포 삭제")
-    public @ResponseBody Response deletePopo(
-            @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
-            @Pattern(regexp = "^[1-9]+", message = "숫자만 입력 가능합니다")
-            @PathVariable Integer popoId) throws Exception {
-        return popoCrudService.deletePopo(popoId);
-    }
+//    @RequestMapping(path = "/{popoId}", method = RequestMethod.DELETE)
+//    // @ApiOperation(value = "포포 삭제")
+//    public @ResponseBody Response deletePopo(
+//            @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
+//            @Pattern(regexp = "^[0-9]+", message = "숫자만 입력 가능합니다")
+//            @PathVariable Integer popoId) throws Exception {
+//        return popoCrudService.deletePopo(popoId);
+//    }
 
-    @RequestMapping(value = "/popo/{popoId}/background", method = RequestMethod.PATCH)
-    // @ApiOperation(value = "포포 배경 수정")
+    @RequestMapping(value = "/popo/{popoId}/background", method = RequestMethod.PATCH, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @ApiOperation(value = "트래커 배경 수정")
     public @ResponseBody Response changeBackground(
             @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
-            @Pattern(regexp = "^[1-9]+", message = "숫자만 입력 가능합니다")
+            @Pattern(regexp = "^[0-9]+", message = "숫자만 입력 가능합니다")
             @PathVariable("popoId") Integer popoId,
-            @RequestBody String background) throws Exception {
+            @RequestPart MultipartFile background) throws Exception {
         return popoCrudService.changeBackground(popoId, background);
     }
 

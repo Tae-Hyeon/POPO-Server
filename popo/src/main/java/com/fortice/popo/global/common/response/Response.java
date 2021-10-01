@@ -1,13 +1,10 @@
 package com.fortice.popo.global.common.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Optional;
 
-@Getter @Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Response<T> {

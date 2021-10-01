@@ -10,6 +10,7 @@ import com.fortice.popo.global.common.response.Response;
 import com.fortice.popo.global.error.exception.NoPermissionException;
 import com.fortice.popo.global.error.exception.NotFoundDataException;
 import com.fortice.popo.global.util.Checker;
+import com.fortice.popo.global.util.FileUtil;
 import com.fortice.popo.global.util.Formatter;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -30,19 +32,22 @@ import java.util.Optional;
 @Transactional
 public class TrackerCrudService {
     @Autowired
-    PopoDAO popoDAO;
+    private PopoDAO popoDAO;
     @Autowired
-    OptionDAO optionDAO;
+    private OptionDAO optionDAO;
     @Autowired
-    TrackerDAO trackerDAO;
+    private TrackerDAO trackerDAO;
     @Autowired
-    TrackerContentDAO trackerContentDAO;
+    private TrackerContentDAO trackerContentDAO;
 
-    Checker checker = new Checker();
-    Formatter formatter = new Formatter();
+    private Checker checker = new Checker();
+    private Formatter formatter = new Formatter();
+    private FileUtil fileUtil = new FileUtil();
 
     @Value("${path.root}")
-    String rootPath;
+    private String rootPath;
+    @Value("${uri.image-server}")
+    private String imageServerURI;
 
     public Response getTracker(Integer popoId, String year, String month) throws Exception {
 
@@ -55,6 +60,7 @@ public class TrackerCrudService {
 
         TrackerResponse trackerResponse = TrackerResponse.builder()
                 .category(popo.getCategory())
+                .background(popo.getTracker_image())
                 .build();
         trackerResponse.updateTracker(year, month, tracker);
 
@@ -75,32 +81,32 @@ public class TrackerCrudService {
         return response;
     }
 
-    public Response insertOneDay(Integer popoId, CreateDayRequest request) throws Exception{
+    public Response insertOneDay(Integer popoId, MultipartFile image, CreateDayRequest request) throws Exception{
         Date date = new SimpleDateFormat("yyyy-MM-dd").parse(request.getDate());
-        System.out.println(date);
-        System.out.println(request.getDate());
-        System.out.println(date);
-        Day day = trackerDAO.save(Day.builder()
-                .image("")
+        Day newDay = Day.builder()
                 .popo(Popo.builder().id(popoId).build())
                 .date(date)
-                .build()
-        );
+                .image(fileUtil.uploadFile(image, "tracker", 0))
+                .build();
+
+        newDay = trackerDAO.save(newDay);
 
         List<Option> options = optionDAO.getIdsByPopo(popoId);
+        List<OptionContentDTO> contents = new ArrayList<>();
         for(Option option : options) {
             OptionContent newContents = OptionContent.builder()
                     .option(option)
-                    .day(day)
-                    .contents("")
+                    .day(newDay)
+                    .contents("option")
                     .build();
+
+            contents.add(new OptionContentDTO(option, newContents));
 
             newContents = trackerContentDAO.save(newContents);
         }
 
-        DayResponse dayResponse = new DayResponse(day,trackerContentDAO.findOptionsByDayId(day.getId()));
 
-        Response response = new Response(200, "조회 성공", dayResponse);
+        Response response = new Response(200, "생성 성공", new DayResponse(newDay, contents));
         return response;
     }
 
@@ -119,31 +125,18 @@ public class TrackerCrudService {
     }
 
     public Response patchImage(Integer dayId, MultipartFile image) throws Exception{
-        checker.checkFileType(image);
-
         Day day = trackerDAO.findById(dayId)
                 .orElseThrow(NotFoundDataException::new);
 
         checker.checkPermission(day, 1);
 
-        File deleteFile = new File(rootPath + day.getImage());
-
-        String path = formatter.getPathWithResourceAndFile("tracker", new Date(), 0, image.getOriginalFilename());
-        File dest = new File(rootPath + path);
-        image.transferTo(dest);
-
+        String preImagePath = day.getImage();
+        String path = fileUtil.uploadFile(image, "day", 0);
         day.setImage(path);
         trackerDAO.save(day);
-        if(deleteFile.exists() && deleteFile.isFile()) {
-            if(deleteFile.delete())
-                System.out.println(deleteFile.getPath() + "사진 삭제 성공");
-            else{
-                //TODO ERROR LOG
-                System.out.println(deleteFile.getPath() + "사진 삭제 실패");
-            }
-        }
+        fileUtil.deleteFile(preImagePath);
 
-        Response response = new Response(200, "수정 성공", path);
+        Response<String> response = new Response<String>(200, "수정 성공", imageServerURI + path);
         return response;
     }
 
@@ -155,7 +148,10 @@ public class TrackerCrudService {
                 .build();
 
         newDay = trackerDAO.save(newDay);
+    }
 
-
+    private void setPathWithImageServerURI(List<Day> dayList) {
+        for(Day day : dayList)
+            day.setImage(this.imageServerURI + day.getImage());
     }
 }
