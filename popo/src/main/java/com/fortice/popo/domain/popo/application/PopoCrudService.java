@@ -76,7 +76,7 @@ public class PopoCrudService {
         return popoResponse;
     }
 
-    public Popo insertPopo(Integer popoId, PopoCreateRequest request) throws Exception{
+    public PopoDTO insertPopo(Integer popoId, PopoCreateRequest request) throws Exception{
         Popo newPopo = popoDAO.findById(popoId)
                 .orElseThrow(NotFoundDataException::new);
 
@@ -89,7 +89,7 @@ public class PopoCrudService {
             OptionDAO.saveAll(newOptions);
         }
 
-        return newPopo;
+        return new PopoDTO(newPopo, imageServerURI);
     }
 //
 //    public Object deletePopo(Integer popoId) throws Exception{
