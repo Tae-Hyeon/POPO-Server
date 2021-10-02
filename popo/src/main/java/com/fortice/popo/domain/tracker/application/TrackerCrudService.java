@@ -42,7 +42,7 @@ public class TrackerCrudService {
     private static final Checker checker = new Checker();
     private static final Formatter formatter = new Formatter();
 
-    public Body getTracker(Integer popoId, String year, String month) throws Exception {
+    public TrackerResponse getTracker(Integer popoId, String year, String month) throws Exception {
 
         Popo popo = popoDAO.findById(popoId)
                 .orElseThrow(NotFoundDataException::new);
@@ -59,11 +59,10 @@ public class TrackerCrudService {
                 .build();
         trackerResponse.updateTracker(year, month, tracker);
 
-        Body body = new Body(200, "조회 성공", trackerResponse);
-        return body;
+        return trackerResponse;
     }
 
-    public Body getOneDay(Integer popoId, Integer dayId) throws Exception{
+    public DayResponse getOneDay(Integer popoId, Integer dayId) throws Exception{
         //TODO 유저 확인 과정 필요
         List<OptionContentDTO> options = trackerContentDAO.findOptionsByDayId(dayId);
         checker.checkEmpty(options);
@@ -73,11 +72,10 @@ public class TrackerCrudService {
         dayResponse.setUri(imageServerURI);
         dayResponse.setOptions(options);
 
-        Body body = new Body(200, "조회 성공", dayResponse);
-        return body;
+        return dayResponse;
     }
 
-    public Body insertOneDay(Integer popoId, MultipartFile image, CreateDayRequest request) throws Exception{
+    public DayResponse insertOneDay(Integer popoId, MultipartFile image, CreateDayRequest request) throws Exception{
         FileUtil fileUtil = new FileUtil(rootPath);
 
         Date date = new SimpleDateFormat("yyyy-MM-dd").parse(request.getDate());
@@ -106,11 +104,10 @@ public class TrackerCrudService {
         DayResponse dayResponse = new DayResponse(newDay, contents);
         dayResponse.setUri(imageServerURI);
 
-        Body body = new Body(200, "생성 성공", dayResponse);
-        return body;
+        return dayResponse;
     }
 
-    public Body patchContents(Integer contentId, String contents) throws Exception{
+    public String patchContents(Integer contentId, String contents) throws Exception{
         OptionContent content = trackerContentDAO.findById(contentId)
                 .orElseThrow(NotFoundDataException::new);
 
@@ -120,11 +117,10 @@ public class TrackerCrudService {
         content.setContents(contents);
         trackerContentDAO.save(content);
 
-        Body body = new Body(200, "수정 성공", null);
-        return body;
+        return "";
     }
 
-    public Body patchImage(Integer dayId, MultipartFile image) throws Exception{
+    public String patchImage(Integer dayId, MultipartFile image) throws Exception{
         FileUtil fileUtil = new FileUtil(rootPath);
 
         Day day = trackerDAO.findById(dayId)
@@ -138,7 +134,6 @@ public class TrackerCrudService {
         trackerDAO.save(day);
         fileUtil.deleteFile(preImagePath);
 
-        Body<String> body = new Body<String>(200, "수정 성공", imageServerURI + path);
-        return body;
+        return imageServerURI + path;
     }
 }
