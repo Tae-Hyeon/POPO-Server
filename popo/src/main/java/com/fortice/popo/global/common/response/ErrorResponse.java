@@ -1,14 +1,11 @@
 package com.fortice.popo.global.common.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.validation.FieldError;
 
 import java.util.List;
 
-@Getter @Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ErrorResponse {

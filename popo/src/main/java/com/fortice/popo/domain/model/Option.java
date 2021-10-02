@@ -25,6 +25,9 @@ public class Option {
     @Column(name = "name", nullable = false)
     private String name;
 
+    @Column(name = "type", nullable = false)
+    private int type;
+
     @Column(name = "`order`", nullable = false)
     private int order;
 

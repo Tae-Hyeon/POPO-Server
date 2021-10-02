@@ -2,109 +2,138 @@ package com.fortice.popo.domain.tracker.application;
 
 import com.fortice.popo.domain.model.*;
 import com.fortice.popo.domain.popo.dao.OptionDAO;
+import com.fortice.popo.domain.popo.dao.PopoDAO;
 import com.fortice.popo.domain.tracker.dao.TrackerContentDAO;
 import com.fortice.popo.domain.tracker.dao.TrackerDAO;
-import com.fortice.popo.domain.tracker.dto.CreateDayRequest;
-import com.fortice.popo.domain.tracker.dto.DayResponse;
-import com.fortice.popo.domain.tracker.dto.OptionContentDTO;
-import com.fortice.popo.domain.tracker.dto.TrackerResponse;
-import com.fortice.popo.global.common.response.Response;
-import com.fortice.popo.global.error.exception.NoPermissionException;
+import com.fortice.popo.domain.tracker.dto.*;
+import com.fortice.popo.global.common.response.Body;
 import com.fortice.popo.global.error.exception.NotFoundDataException;
 import com.fortice.popo.global.util.Checker;
+import com.fortice.popo.global.util.FileUtil;
+import com.fortice.popo.global.util.Formatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Transactional
 public class TrackerCrudService {
     @Autowired
-    OptionDAO optionDAO;
+    private PopoDAO popoDAO;
     @Autowired
-    TrackerDAO trackerDAO;
+    private OptionDAO optionDAO;
     @Autowired
-    TrackerContentDAO trackerContentDAO;
+    private TrackerDAO trackerDAO;
+    @Autowired
+    private TrackerContentDAO trackerContentDAO;
 
-    Checker checker;
+    @Value("${uri.image-server}")
+    private String imageServerURI;
+    @Value("${path.root}")
+    private String rootPath;
 
-    public Response getTracker(Integer popoId, String year, String month) throws Exception {
-        LocalDate now = LocalDate.now();
+    private static final Checker checker = new Checker();
+    private static final Formatter formatter = new Formatter();
 
-        year = year.isBlank() ? checker.checkDateForm(now.getYear()) : year;
-        month = month.isBlank() ? checker.checkDateForm(now.getMonthValue()) : month;
+    public TrackerResponse getTracker(Integer popoId, String year, String month) throws Exception {
 
-        String dateFormat = year + "-" + month;
-        List<TrackerResponse> tracker = trackerDAO.getTrackerResponseById(popoId, dateFormat);
+        Popo popo = popoDAO.findById(popoId)
+                .orElseThrow(NotFoundDataException::new);
+        checker.checkPermission(popo, 1);
 
-        Response response = new Response(200, "조회 성공", tracker);
-        return response;
+        String dateFormat = formatter.getDateFormatByYearAndMonth(year, month);
+        List<DayDTO> tracker = trackerDAO.getDayDTOById(popoId, dateFormat);
+        for(DayDTO day : tracker)
+            day.setUri(imageServerURI);
+
+        TrackerResponse trackerResponse = TrackerResponse.builder()
+                .category(popo.getCategory())
+                .background(imageServerURI + popo.getTracker_image())
+                .build();
+        trackerResponse.updateTracker(year, month, tracker);
+
+        return trackerResponse;
     }
 
-    public Response getOneDay(Integer popoId, Integer dayId) throws Exception{
+    public DayResponse getOneDay(Integer popoId, Integer dayId) throws Exception{
+        //TODO 유저 확인 과정 필요
         List<OptionContentDTO> options = trackerContentDAO.findOptionsByDayId(dayId);
-        DayResponse day = trackerDAO.getDayResponseById(dayId);
-        day.setOptions(options);
+        checker.checkEmpty(options);
 
-        Response response = new Response(200, "조회 성공", day);
-        return response;
+        DayResponse dayResponse = trackerDAO.getDayResponseById(dayId);
+
+        dayResponse.setUri(imageServerURI);
+        dayResponse.setOptions(options);
+
+        return dayResponse;
     }
 
-    public Response insertOneDay(Integer popoId, CreateDayRequest request) throws Exception{
-        Date date = new SimpleDateFormat("YYYY-mm-dd").parse(request.getDate());
-        Optional<Day> day = trackerDAO.findByDate(date);
+    public DayResponse insertOneDay(Integer popoId, MultipartFile image, CreateDayRequest request) throws Exception{
+        FileUtil fileUtil = new FileUtil(rootPath);
 
-        checkPermissionDay(day, 1);
-
+        Date date = new SimpleDateFormat("yyyy-MM-dd").parse(request.getDate());
         Day newDay = Day.builder()
                 .popo(Popo.builder().id(popoId).build())
                 .date(date)
+                .image(fileUtil.uploadFile(image, "tracker", 0))
                 .build();
 
         newDay = trackerDAO.save(newDay);
 
         List<Option> options = optionDAO.getIdsByPopo(popoId);
-
+        List<OptionContentDTO> contents = new ArrayList<>();
         for(Option option : options) {
             OptionContent newContents = OptionContent.builder()
                     .option(option)
                     .day(newDay)
-                    .contents("")
+                    .contents("option")
                     .build();
+
+            contents.add(new OptionContentDTO(option, newContents));
 
             newContents = trackerContentDAO.save(newContents);
         }
-        Response response = new Response(200, "조회 성공", null);
-        return response;
+
+        DayResponse dayResponse = new DayResponse(newDay, contents);
+        dayResponse.setUri(imageServerURI);
+
+        return dayResponse;
     }
 
-    public Response patchContents(Integer contentId, String contents) throws Exception{
-        Optional<OptionContent> content = trackerContentDAO.findById(contentId);
+    public String patchContents(Integer contentId, String contents) throws Exception{
+        OptionContent content = trackerContentDAO.findById(contentId)
+                .orElseThrow(NotFoundDataException::new);
 
-        checkPermissionContent(content, 1);
+        checker.checkEmpty(content);
+        checker.checkPermission(content, 1);
 
-        content.get().setContents(contents);
-        trackerContentDAO.save(content.get());
+        content.setContents(contents);
+        trackerContentDAO.save(content);
 
-        Response response = new Response(200, "수정 성공", null);
-        return response;
+        return "";
     }
 
-    private void checkPermissionContent(Optional<OptionContent> content, int userId) throws Exception{
-        content.orElseThrow(NotFoundDataException::new);
-        if(!checker.checkOwner(content.get().getOwnerId(), userId))
-            throw new NoPermissionException();
-    }
+    public String patchImage(Integer dayId, MultipartFile image) throws Exception{
+        FileUtil fileUtil = new FileUtil(rootPath);
 
-    private void checkPermissionDay(Optional<Day> day, int userId) throws Exception{
-        day.orElseThrow(NotFoundDataException::new);
-        if(!checker.checkOwner(day.get().getOwnerId(), userId))
-            throw new NoPermissionException();
+        Day day = trackerDAO.findById(dayId)
+                .orElseThrow(NotFoundDataException::new);
+
+        checker.checkPermission(day, 1);
+
+        String preImagePath = day.getImage();
+        String path = fileUtil.uploadFile(image, "day", 0);
+        day.setImage(path);
+        trackerDAO.save(day);
+        fileUtil.deleteFile(preImagePath);
+
+        return imageServerURI + path;
     }
 }
