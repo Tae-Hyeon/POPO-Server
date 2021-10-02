@@ -2,7 +2,7 @@ package com.fortice.popo.domain.tracker.api;
 
 import com.fortice.popo.domain.tracker.application.TrackerCrudService;
 import com.fortice.popo.domain.tracker.dto.CreateDayRequest;
-import com.fortice.popo.global.common.response.Response;
+import com.fortice.popo.global.common.response.Body;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +19,8 @@ public class TrackerAPI {
     TrackerCrudService trackerCrudService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public @ResponseBody Response getTracker(
+    public @ResponseBody
+    Body getTracker(
             @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
             @Pattern(regexp = "^[0-9]+", message = "숫자만 입력 가능합니다")
             @PathVariable Integer popoId,
@@ -33,7 +34,8 @@ public class TrackerAPI {
     }
 
     @RequestMapping(path = "/{dayId}", method = RequestMethod.GET)
-    public @ResponseBody Response getOneDay(
+    public @ResponseBody
+    Body getOneDay(
             @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
             @Pattern(regexp = "^[0-9]+", message = "숫자만 입력 가능합니다")
             @PathVariable Integer popoId,
@@ -44,7 +46,8 @@ public class TrackerAPI {
     }
 
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public @ResponseBody Response insertOneDay(
+    public @ResponseBody
+    Body insertOneDay(
             @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
             @Pattern(regexp = "^[0-9]+", message = "숫자만 입력 가능합니다")
             @PathVariable Integer popoId,
@@ -54,7 +57,8 @@ public class TrackerAPI {
     }
 
     @RequestMapping(path = "/{dayId}/contents/{contentId}", method = RequestMethod.PATCH)
-    public @ResponseBody Response patchContents(
+    public @ResponseBody
+    Body patchContents(
             @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
             @Pattern(regexp = "^[0-9]+", message = "숫자만 입력 가능합니다")
             @PathVariable Integer contentId,
@@ -63,7 +67,8 @@ public class TrackerAPI {
     }
 
     @RequestMapping(path = "/{dayId}/image", method = RequestMethod.PATCH, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public @ResponseBody Response patchImage(
+    public @ResponseBody
+    Body patchImage(
             @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
             @Pattern(regexp = "^[0-9]+", message = "숫자만 입력 가능합니다")
             @PathVariable Integer dayId,

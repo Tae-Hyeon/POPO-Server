@@ -7,11 +7,10 @@ import com.fortice.popo.domain.popo.dao.OptionDAO;
 import com.fortice.popo.domain.popo.dao.PopoDAO;
 import com.fortice.popo.domain.popo.dto.PopoCreateRequest;
 import com.fortice.popo.domain.popo.dto.PopoDTO;
-import com.fortice.popo.global.common.response.Response;
+import com.fortice.popo.global.common.URL;
 import com.fortice.popo.global.error.exception.NotFoundDataException;
 import com.fortice.popo.global.util.Checker;
 import com.fortice.popo.global.util.FileUtil;
-import com.fortice.popo.global.util.Formatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -29,38 +28,32 @@ public class PopoCrudService {
     @Autowired
     private OptionDAO OptionDAO;
 
-    private Checker checker = new Checker();
-    private Formatter formatter = new Formatter();
-    private FileUtil fileUtil = new FileUtil();
-
-    @Value("${path.root}")
-    private String rootPath;
     @Value("${uri.image-server}")
     private String imageServerURI;
+    @Value("${path.root}")
+    private String rootPath;
 
-    private Response returnResponse(int code, String message, Object data) throws Exception{
-        Response<Object> response = new Response<>(code, message, data);
-        return response;
-    }
+    private static final Checker checker = new Checker();
 
-    public Response getPopoList() throws Exception{
+    public List<PopoDTO> getPopoList() throws Exception{
         List<PopoDTO> popoList = popoDAO.findPoposByUserId(1);
         for(PopoDTO popo : popoList)
             popo.setUri(imageServerURI);
 
-        return returnResponse(200, "포포 리스트 조회 성공", popoList);
+        return popoList;
     }
 
-    public Response getPopo(Integer popoId) throws Exception{
+    public Popo getPopo(Integer popoId) throws Exception{
         Popo popo = popoDAO.findById(popoId)
                 .orElseThrow(NotFoundDataException::new);
 
         checker.checkPermission(popo, 1);
 
-        return returnResponse(200, "포포 조회 성공", popo);
+        return popo;
     }
 
-    public Response setDefaultPopo(List<MultipartFile> backgrounds) throws Exception{
+    public List<PopoDTO> setDefaultPopo(List<MultipartFile> backgrounds) throws Exception{
+        FileUtil fileUtil = new FileUtil(rootPath);
         List<Popo> newPopos = new ArrayList<>();
         List<PopoDTO> popoResponse = new ArrayList<>();
 
@@ -80,10 +73,10 @@ public class PopoCrudService {
 
         popoDAO.saveAll(newPopos);
 
-        return returnResponse(200, "포포 생성 성공", popoResponse);
+        return popoResponse;
     }
 
-    public Response insertPopo(Integer popoId, PopoCreateRequest request) throws Exception{
+    public Popo insertPopo(Integer popoId, PopoCreateRequest request) throws Exception{
         Popo newPopo = popoDAO.findById(popoId)
                 .orElseThrow(NotFoundDataException::new);
 
@@ -96,33 +89,36 @@ public class PopoCrudService {
             OptionDAO.saveAll(newOptions);
         }
 
-        return returnResponse(200, "포포 생성 성공", newPopo);
+        return newPopo;
     }
+//
+//    public Object deletePopo(Integer popoId) throws Exception{
+//        Popo popo = popoDAO.findById(popoId)
+//                .orElseThrow(NotFoundDataException::new);
+//
+//        checker.checkPermission(popo, 1);
+//        popoDAO.deleteById(popoId);
+//
+//        popo.setCategory(-1);
+//        popoDAO.save(popo);
+//
+//        return null;
+//    }
 
-    public Response deletePopo(Integer popoId) throws Exception{
+    public String changeBackground(Integer popoId, MultipartFile background) throws Exception {
         Popo popo = popoDAO.findById(popoId)
                 .orElseThrow(NotFoundDataException::new);
-
-        checker.checkPermission(popo, 1);
-        popoDAO.deleteById(popoId);
-
-        popo.setCategory(-1);
-        popoDAO.save(popo);
-
-        return returnResponse(200, "포포 삭제 성공", null);
-    }
-
-    public Response changeBackground(Integer popoId, MultipartFile background) throws Exception {
-        Popo popo = popoDAO.findById(popoId)
-                .orElseThrow(NotFoundDataException::new);
         checker.checkPermission(popo, 1);
 
+        FileUtil fileUtil = new FileUtil(rootPath);
         String preImagePath = popo.getTracker_image();
         String path = fileUtil.uploadFile(background, "tracker", 0);
         popo.setTracker_image(path);
         popoDAO.save(popo);
         fileUtil.deleteFile(preImagePath);
 
-        return returnResponse(200, "포포 배경 수정 성공", imageServerURI + path);
+        String url = imageServerURI + path;
+
+        return url;
     }
 }

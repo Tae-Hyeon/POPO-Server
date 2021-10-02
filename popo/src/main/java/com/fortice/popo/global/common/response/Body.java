@@ -4,10 +4,10 @@ import lombok.*;
 
 import java.util.Optional;
 
-@Data
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Response<T> {
+public class Body<T> {
     private int code;
     private String message;
     private T data;

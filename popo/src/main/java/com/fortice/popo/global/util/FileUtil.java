@@ -10,11 +10,10 @@ import java.util.List;
 
 @NoArgsConstructor
 public class FileUtil {
-    private Checker checker = new Checker();
-    private Formatter formatter = new Formatter();
+    private static final Checker checker = new Checker();
+    private static final Formatter formatter = new Formatter();
 
-    @Value("${path.root}")
-    private String rootPath;
+    private static String rootPath;
 
     public String uploadFile(MultipartFile file, String resource, int identifier) throws Exception{
         if(file == null)
@@ -23,6 +22,7 @@ public class FileUtil {
         checker.checkFileType(file);
 
         String path = formatter.getPathWithResourceAndFile(resource, new Date(), identifier, file.getOriginalFilename());
+        System.out.println(rootPath + path);
         File dest = new File(rootPath + path);
         file.transferTo(dest);
 
@@ -40,5 +40,9 @@ public class FileUtil {
                 System.out.println(deleteFile.getPath() + "사진 삭제 실패");
             }
         }
+    }
+
+    public FileUtil(String rootPath) {
+        this.rootPath = rootPath;
     }
 }
