@@ -12,8 +12,10 @@ import java.util.Date;
         classes = @ConstructorResult(
                 targetClass = OptionContentDTO.class,
                 columns = {
+                        @ColumnResult(name = "id", type = Integer.class),
                         @ColumnResult(name = "name", type = String.class),
                         @ColumnResult(name = "contents", type = String.class),
+                        @ColumnResult(name = "type", type = Integer.class),
                         @ColumnResult(name = "order", type = Integer.class)
                 }
         )

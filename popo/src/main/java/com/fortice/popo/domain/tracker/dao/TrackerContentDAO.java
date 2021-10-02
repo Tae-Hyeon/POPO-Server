@@ -15,8 +15,9 @@ import java.util.List;
 public interface TrackerContentDAO extends JpaRepository<OptionContent, Integer> {
 
     @Query("SELECT new com.fortice.popo.domain.tracker.dto.OptionContentDTO(" +
-            "c.option.name, c.contents, c.option.order) " +
+            "c.id, c.option.name, c.contents, c.option.type, c.option.order) " +
             "FROM OptionContent c " +
-            "WHERE c.day.id=:dayId")
+            "WHERE c.day.id=:dayId " +
+            "ORDER BY c.option.order")
     List<OptionContentDTO> findOptionsByDayId(@Param("dayId") Integer dayId);
 }

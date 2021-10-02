@@ -6,17 +6,20 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.jar.JarException;
 
-@ControllerAdvice(annotations = {RestController.class, Service.class})
+@RestControllerAdvice(annotations = {RestController.class, Service.class})
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class JPAExceptionHandler {
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EmptyResultDataAccessException.class)
     protected ErrorResponse handleEmptyResultDataAccessException(EmptyResultDataAccessException e) {
         System.out.println(e);
@@ -24,6 +27,7 @@ public class JPAExceptionHandler {
         return errorResponse;
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(NotFoundDataException.class)
     protected ErrorResponse handleNotFoundDataException(NotFoundDataException e) {
         System.out.println(e);
@@ -31,6 +35,7 @@ public class JPAExceptionHandler {
         return errorResponse;
     }
 
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(DataIntegrityViolationException.class)
     protected ErrorResponse handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         e.printStackTrace();
