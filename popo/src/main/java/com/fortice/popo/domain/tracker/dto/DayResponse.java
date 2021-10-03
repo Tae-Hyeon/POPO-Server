@@ -35,14 +35,14 @@ public class DayResponse {
     public DayResponse(Day day, List<OptionContentDTO> options)
     {
         this.id = day.getId();
-        this.date = new Date(day.getDate().getTime() + 24 * 60 * 60 * 1000);
+        this.date = new Date(day.getDate().getTime() + 9 * 60 * 60 * 1000);
         this.image = day.getImage();
         this.options = options;
     }
 
     public DayResponse(Integer id, Date date, String image) {
         this.id = id;
-        this.date = date;
+        this.date = new Date(date.getTime() + 9 * 60 * 60 * 1000);
         this.image = image;
     }
 }

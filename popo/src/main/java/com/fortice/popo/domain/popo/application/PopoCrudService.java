@@ -117,8 +117,6 @@ public class PopoCrudService {
         popoDAO.save(popo);
         fileUtil.deleteFile(preImagePath);
 
-        String url = imageServerURI + path;
-
-        return url;
+        return imageServerURI + path;
     }
 }

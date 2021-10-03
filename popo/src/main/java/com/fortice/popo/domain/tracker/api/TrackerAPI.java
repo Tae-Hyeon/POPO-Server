@@ -52,20 +52,19 @@ public class TrackerAPI {
         );
     }
 
-    @RequestMapping(method = RequestMethod.POST, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public @ResponseBody
     ResponseEntity<Body> insertOneDay(
             @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
             @Pattern(regexp = "^[0-9]+", message = "숫자만 입력 가능합니다")
             @PathVariable Integer popoId,
-            @RequestPart MultipartFile image,
-            @Valid @RequestBody CreateDayRequest request) throws Exception {
+            @Valid @ModelAttribute CreateDayRequest request) throws Exception {
 
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
 
         return new ResponseEntity(
-                makeBody(200, "추가 완료", trackerCrudService.insertOneDay(popoId, image, request)),
+                makeBody(200, "추가 완료", trackerCrudService.insertOneDay(popoId, request)),
                 header,
                 HttpStatus.OK
         );

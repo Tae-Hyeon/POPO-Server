@@ -75,32 +75,33 @@ public class TrackerCrudService {
         return dayResponse;
     }
 
-    public DayResponse insertOneDay(Integer popoId, MultipartFile image, CreateDayRequest request) throws Exception{
+    public DayResponse insertOneDay(Integer popoId, CreateDayRequest request) throws Exception{
         FileUtil fileUtil = new FileUtil(rootPath);
 
         Date date = new SimpleDateFormat("yyyy-MM-dd").parse(request.getDate());
         Day newDay = Day.builder()
                 .popo(Popo.builder().id(popoId).build())
                 .date(date)
-                .image(fileUtil.uploadFile(image, "tracker", 0))
+                .image(fileUtil.uploadFile(request.getImage(), "tracker", 0))
                 .build();
 
         newDay = trackerDAO.save(newDay);
 
         List<Option> options = optionDAO.getIdsByPopo(popoId);
+        List<OptionContent> newContents = new ArrayList<>();
         List<OptionContentDTO> contents = new ArrayList<>();
         for(Option option : options) {
-            OptionContent newContents = OptionContent.builder()
+            OptionContent newContent = OptionContent.builder()
                     .option(option)
                     .day(newDay)
-                    .contents("option")
+                    .contents(request.getContentsByOptionId(option.getId()))
                     .build();
 
-            contents.add(new OptionContentDTO(option, newContents));
-
-            newContents = trackerContentDAO.save(newContents);
+            newContents.add(newContent);
+            contents.add(new OptionContentDTO(option, newContent));
         }
 
+        trackerContentDAO.saveAll(newContents);
         DayResponse dayResponse = new DayResponse(newDay, contents);
         dayResponse.setUri(imageServerURI);
 
