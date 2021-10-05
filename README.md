@@ -29,7 +29,7 @@ only for 한여름.. 한태현..
   - 현재 DB구조가 이상함
   - Option에 대해 Json으로 Popo에서 관리해도 됨.
   - 마찬가지로 Content도 Day에서 Json으로 관리해도 됨.
-  - 현재 앱에서 DB자체를 ERDB를 사용한 것이 이해 안됨 --> NoSQL로 하는게 좋음
+  - 현재 앱에서 DB자체를 RDBMS를 사용한 것이 이해 안됨 --> NoSQL로 하는게 좋음
     - DB 사용에 대해 미리 고려하기
 
 
