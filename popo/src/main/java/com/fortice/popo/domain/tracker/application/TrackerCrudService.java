@@ -39,6 +39,7 @@ public class TrackerCrudService {
     @Value("${path.root}")
     private String rootPath;
 
+    //TODO:
     private static final Checker checker = new Checker();
     private static final Formatter formatter = new Formatter();
 
@@ -50,7 +51,7 @@ public class TrackerCrudService {
 
         String dateFormat = formatter.getDateFormatByYearAndMonth(year, month);
         List<DayDTO> tracker = trackerDAO.getDayDTOById(popoId, dateFormat);
-        for(DayDTO day : tracker)
+        for (DayDTO day : tracker)
             day.setUri(imageServerURI);
 
         TrackerResponse trackerResponse = TrackerResponse.builder()
@@ -62,7 +63,7 @@ public class TrackerCrudService {
         return trackerResponse;
     }
 
-    public DayResponse getOneDay(Integer popoId, Integer dayId) throws Exception{
+    public DayResponse getOneDay(Integer popoId, Integer dayId) throws Exception {
         //TODO 유저 확인 과정 필요
         List<OptionContentDTO> options = trackerContentDAO.findOptionsByDayId(dayId);
         checker.checkEmpty(options);
@@ -75,7 +76,7 @@ public class TrackerCrudService {
         return dayResponse;
     }
 
-    public DayResponse insertOneDay(Integer popoId, CreateDayRequest request) throws Exception{
+    public DayResponse insertOneDay(Integer popoId, CreateDayRequest request) throws Exception {
         FileUtil fileUtil = new FileUtil(rootPath);
 
         Date date = new SimpleDateFormat("yyyy-MM-dd").parse(request.getDate());
@@ -90,7 +91,7 @@ public class TrackerCrudService {
         List<Option> options = optionDAO.getIdsByPopo(popoId);
         List<OptionContent> newContents = new ArrayList<>();
         List<OptionContentDTO> contents = new ArrayList<>();
-        for(Option option : options) {
+        for (Option option : options) {
             OptionContent newContent = OptionContent.builder()
                     .option(option)
                     .day(newDay)
@@ -108,7 +109,7 @@ public class TrackerCrudService {
         return dayResponse;
     }
 
-    public String patchContents(Integer contentId, String contents) throws Exception{
+    public String patchContents(Integer contentId, String contents) throws Exception {
         OptionContent content = trackerContentDAO.findById(contentId)
                 .orElseThrow(NotFoundDataException::new);
 
@@ -121,7 +122,7 @@ public class TrackerCrudService {
         return "";
     }
 
-    public String patchImage(Integer dayId, MultipartFile image) throws Exception{
+    public String patchImage(Integer dayId, MultipartFile image) throws Exception {
         FileUtil fileUtil = new FileUtil(rootPath);
 
         Day day = trackerDAO.findById(dayId)

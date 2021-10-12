@@ -44,10 +44,8 @@ public class popoAPI {
     @RequestMapping(method = RequestMethod.POST, produces = MediaType.MULTIPART_FORM_DATA_VALUE)
     public @ResponseBody ResponseEntity<Body> setDefaultPopo(
             @RequestPart List<MultipartFile> backgrounds) throws Exception{
-
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
-
         return new ResponseEntity(
                 makeBody(200, "포포 컨셉 세팅 완료", popoCrudService.setDefaultPopo(backgrounds)),
                 header,

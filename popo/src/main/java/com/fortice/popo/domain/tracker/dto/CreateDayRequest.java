@@ -37,25 +37,14 @@ public class CreateDayRequest {
 
     private MultipartFile image;
 
-    private List<CreatedContent> options;
+    private List<CreateContentDTO> options;
 
     public String getContentsByOptionId(Integer id) {
-        for(CreatedContent content : options) {
-            if(content.getOptionId().equals(id))
+        for (CreateContentDTO content : options) {
+            if (content.getOptionId().equals(id))
                 return content.getContents();
         }
 
         return "";
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    class CreatedContent {
-        @NotNull
-        private Integer optionId;
-
-        @NotNull //생성은 null은 아니지만 ""로 비어있을 수 있다.
-        private String contents;
     }
 }

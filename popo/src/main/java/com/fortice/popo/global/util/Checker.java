@@ -7,11 +7,13 @@ import com.fortice.popo.global.error.exception.MultipartFileTypeRestrictExceptio
 import com.fortice.popo.global.error.exception.NoPermissionException;
 import com.fortice.popo.global.error.exception.NotFoundDataException;
 import lombok.NoArgsConstructor;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
 
+@Component
 @NoArgsConstructor
 public class Checker {
     public boolean checkOwner(int ownerId, int requestId) {
