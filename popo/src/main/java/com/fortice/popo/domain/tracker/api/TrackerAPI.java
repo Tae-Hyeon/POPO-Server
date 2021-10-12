@@ -52,13 +52,14 @@ public class TrackerAPI {
         );
     }
 
+    //TODO: insert 시 생성된 id값만 response로 보내주고, 조회는 다시 API를 호출하도록 만들어야함
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public @ResponseBody
     ResponseEntity<Body> insertOneDay(
             @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
             @Pattern(regexp = "^[0-9]+", message = "숫자만 입력 가능합니다")
             @PathVariable Integer popoId,
-            @Valid @ModelAttribute CreateDayRequest request) throws Exception {
+            @Valid @ModelAttribute("request") CreateDayRequest request) throws Exception {
 
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);

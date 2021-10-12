@@ -11,6 +11,7 @@ import com.fortice.popo.global.common.URL;
 import com.fortice.popo.global.error.exception.NotFoundDataException;
 import com.fortice.popo.global.util.Checker;
 import com.fortice.popo.global.util.FileUtil;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -21,29 +22,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 @Transactional
 public class PopoCrudService {
     @Autowired
     private PopoDAO popoDAO;
     @Autowired
-    private OptionDAO OptionDAO;
+    private OptionDAO optionDAO;
 
     @Value("${uri.image-server}")
     private String imageServerURI;
     @Value("${path.root}")
     private String rootPath;
 
-    private static final Checker checker = new Checker();
+    private final Checker checker;
 
-    public List<PopoDTO> getPopoList() throws Exception{
+    public List<PopoDTO> getPopoList() throws Exception {
         List<PopoDTO> popoList = popoDAO.findPoposByUserId(1);
-        for(PopoDTO popo : popoList)
+        for (PopoDTO popo : popoList)
             popo.setUri(imageServerURI);
 
         return popoList;
     }
 
-    public Popo getPopo(Integer popoId) throws Exception{
+    public Popo getPopo(Integer popoId) throws Exception {
         Popo popo = popoDAO.findById(popoId)
                 .orElseThrow(NotFoundDataException::new);
 
@@ -52,21 +54,21 @@ public class PopoCrudService {
         return popo;
     }
 
-    public List<PopoDTO> setDefaultPopo(List<MultipartFile> backgrounds) throws Exception{
+    public List<PopoDTO> setDefaultPopo(List<MultipartFile> backgrounds) throws Exception {
         FileUtil fileUtil = new FileUtil(rootPath);
         List<Popo> newPopos = new ArrayList<>();
         List<PopoDTO> popoResponse = new ArrayList<>();
 
-        for(int i = 1; i <= 12; i++)
-        {
+        for (int i = 1; i <= 12; i++) {
             Popo popo = Popo.builder()
-                    .conceptId(1)
+                    //.conceptId(1)
                     .background(fileUtil.uploadFile(backgrounds.get(i - 1), "popo", i))
                     .category(-1)
                     .order(i)
                     .user(User.builder().id(1).build())
                     .build();
 
+            //TODO: new
             popoResponse.add(new PopoDTO(popo, imageServerURI));
             newPopos.add(popo);
         }
@@ -76,7 +78,7 @@ public class PopoCrudService {
         return popoResponse;
     }
 
-    public PopoDTO insertPopo(Integer popoId, PopoCreateRequest request) throws Exception{
+    public PopoDTO insertPopo(Integer popoId, PopoCreateRequest request) throws Exception {
         Popo newPopo = popoDAO.findById(popoId)
                 .orElseThrow(NotFoundDataException::new);
 
@@ -84,11 +86,11 @@ public class PopoCrudService {
 
         newPopo.setCategory(request.getCategory());
         newPopo = popoDAO.save(newPopo);
-        if(!request.isOptionEmpty()) {
+        if (!request.isOptionEmpty()) {
             List<Option> newOptions = request.getOptions(newPopo);
-            OptionDAO.saveAll(newOptions);
+            optionDAO.saveAll(newOptions);
         }
-
+        //TODO: new
         return new PopoDTO(newPopo, imageServerURI);
     }
 //

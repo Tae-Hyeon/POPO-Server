@@ -16,7 +16,7 @@ public class FileUtil {
     private static String rootPath;
 
     public String uploadFile(MultipartFile file, String resource, int identifier) throws Exception{
-        if(file == null)
+        if(file.isEmpty())
             return "";
 
         checker.checkFileType(file);
