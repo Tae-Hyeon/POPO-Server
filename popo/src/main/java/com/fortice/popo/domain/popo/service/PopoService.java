@@ -1,13 +1,12 @@
-package com.fortice.popo.domain.popo.application;
+package com.fortice.popo.domain.popo.service;
 
 import com.fortice.popo.domain.model.Option;
 import com.fortice.popo.domain.model.Popo;
 import com.fortice.popo.domain.model.User;
-import com.fortice.popo.domain.popo.dao.OptionDAO;
-import com.fortice.popo.domain.popo.dao.PopoDAO;
+import com.fortice.popo.domain.popo.repository.OptionRepository;
+import com.fortice.popo.domain.popo.repository.PopoRepository;
 import com.fortice.popo.domain.popo.dto.PopoCreateRequest;
 import com.fortice.popo.domain.popo.dto.PopoDTO;
-import com.fortice.popo.global.common.URL;
 import com.fortice.popo.global.error.exception.NotFoundDataException;
 import com.fortice.popo.global.util.Checker;
 import com.fortice.popo.global.util.FileUtil;
@@ -24,21 +23,19 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class PopoCrudService {
+public class PopoService {
     @Autowired
-    private PopoDAO popoDAO;
+    private PopoRepository popoRepository;
     @Autowired
-    private OptionDAO optionDAO;
+    private OptionRepository optionRepository;
 
     @Value("${uri.image-server}")
     private String imageServerURI;
     @Value("${path.root}")
     private String rootPath;
 
-    private final Checker checker;
-
     public List<PopoDTO> getPopoList() throws Exception {
-        List<PopoDTO> popoList = popoDAO.findPoposByUserId(1);
+        List<PopoDTO> popoList = popoRepository.findPoposByUserId(1);
         for (PopoDTO popo : popoList)
             popo.setUri(imageServerURI);
 
@@ -46,10 +43,10 @@ public class PopoCrudService {
     }
 
     public Popo getPopo(Integer popoId) throws Exception {
-        Popo popo = popoDAO.findById(popoId)
+        Popo popo = popoRepository.findById(popoId)
                 .orElseThrow(NotFoundDataException::new);
 
-        checker.checkPermission(popo, 1);
+        Checker.checkPermission(popo, 1);
 
         return popo;
     }
@@ -73,25 +70,33 @@ public class PopoCrudService {
             newPopos.add(popo);
         }
 
-        popoDAO.saveAll(newPopos);
+        popoRepository.saveAll(newPopos);
 
         return popoResponse;
     }
 
     public PopoDTO insertPopo(Integer popoId, PopoCreateRequest request) throws Exception {
-        Popo newPopo = popoDAO.findById(popoId)
+        Popo newPopo = popoRepository.findById(popoId)
                 .orElseThrow(NotFoundDataException::new);
 
-        checker.checkPermission(newPopo, 1);
+        Checker.checkPermission(newPopo, 1);
 
         newPopo.setCategory(request.getCategory());
-        newPopo = popoDAO.save(newPopo);
+        newPopo = popoRepository.save(newPopo);
         if (!request.isOptionEmpty()) {
             List<Option> newOptions = request.getOptions(newPopo);
-            optionDAO.saveAll(newOptions);
+            optionRepository.saveAll(newOptions);
         }
         //TODO: new
         return new PopoDTO(newPopo, imageServerURI);
+    }
+
+    public List<Option> getOptions(Integer popoId) throws Exception {
+        List<Option> options = optionRepository.getOptionByPopo(popoId);
+
+        Checker.checkPermission(options.get(0), 1);
+
+        return options;
     }
 //
 //    public Object deletePopo(Integer popoId) throws Exception{
@@ -108,15 +113,15 @@ public class PopoCrudService {
 //    }
 
     public String changeBackground(Integer popoId, MultipartFile background) throws Exception {
-        Popo popo = popoDAO.findById(popoId)
+        Popo popo = popoRepository.findById(popoId)
                 .orElseThrow(NotFoundDataException::new);
-        checker.checkPermission(popo, 1);
+        Checker.checkPermission(popo, 1);
 
         FileUtil fileUtil = new FileUtil(rootPath);
         String preImagePath = popo.getTracker_image();
         String path = fileUtil.uploadFile(background, "tracker", 0);
         popo.setTracker_image(path);
-        popoDAO.save(popo);
+        popoRepository.save(popo);
         fileUtil.deleteFile(preImagePath);
 
         return imageServerURI + path;

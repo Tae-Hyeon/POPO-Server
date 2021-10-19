@@ -1,12 +1,11 @@
-package com.fortice.popo.domain.tracker.application;
+package com.fortice.popo.domain.tracker.service;
 
 import com.fortice.popo.domain.model.*;
-import com.fortice.popo.domain.popo.dao.OptionDAO;
-import com.fortice.popo.domain.popo.dao.PopoDAO;
-import com.fortice.popo.domain.tracker.dao.TrackerContentDAO;
-import com.fortice.popo.domain.tracker.dao.TrackerDAO;
+import com.fortice.popo.domain.popo.repository.OptionRepository;
+import com.fortice.popo.domain.popo.repository.PopoRepository;
+import com.fortice.popo.domain.tracker.repository.TrackerContentRepository;
+import com.fortice.popo.domain.tracker.repository.TrackerRepository;
 import com.fortice.popo.domain.tracker.dto.*;
-import com.fortice.popo.global.common.response.Body;
 import com.fortice.popo.global.error.exception.NotFoundDataException;
 import com.fortice.popo.global.util.Checker;
 import com.fortice.popo.global.util.FileUtil;
@@ -24,15 +23,15 @@ import java.util.List;
 
 @Service
 @Transactional
-public class TrackerCrudService {
+public class TrackerService {
     @Autowired
-    private PopoDAO popoDAO;
+    private PopoRepository popoRepository;
     @Autowired
-    private OptionDAO optionDAO;
+    private OptionRepository optionRepository;
     @Autowired
-    private TrackerDAO trackerDAO;
+    private TrackerRepository trackerRepository;
     @Autowired
-    private TrackerContentDAO trackerContentDAO;
+    private TrackerContentRepository trackerContentRepository;
 
     @Value("${uri.image-server}")
     private String imageServerURI;
@@ -45,12 +44,12 @@ public class TrackerCrudService {
 
     public TrackerResponse getTracker(Integer popoId, String year, String month) throws Exception {
 
-        Popo popo = popoDAO.findById(popoId)
+        Popo popo = popoRepository.findById(popoId)
                 .orElseThrow(NotFoundDataException::new);
         checker.checkPermission(popo, 1);
 
         String dateFormat = formatter.getDateFormatByYearAndMonth(year, month);
-        List<DayDTO> tracker = trackerDAO.getDayDTOById(popoId, dateFormat);
+        List<DayDTO> tracker = trackerRepository.getDayDTOById(popoId, dateFormat);
         for (DayDTO day : tracker)
             day.setUri(imageServerURI);
 
@@ -65,10 +64,10 @@ public class TrackerCrudService {
 
     public DayResponse getOneDay(Integer popoId, Integer dayId) throws Exception {
         //TODO 유저 확인 과정 필요
-        List<OptionContentDTO> options = trackerContentDAO.findOptionsByDayId(dayId);
+        List<OptionContentDTO> options = trackerContentRepository.findOptionsByDayId(dayId);
         checker.checkEmpty(options);
 
-        DayResponse dayResponse = trackerDAO.getDayResponseById(dayId);
+        DayResponse dayResponse = trackerRepository.getDayResponseById(dayId);
 
         dayResponse.setUri(imageServerURI);
         dayResponse.setOptions(options);
@@ -86,9 +85,9 @@ public class TrackerCrudService {
                 .image(fileUtil.uploadFile(request.getImage(), "tracker", 0))
                 .build();
 
-        newDay = trackerDAO.save(newDay);
+        newDay = trackerRepository.save(newDay);
 
-        List<Option> options = optionDAO.getIdsByPopo(popoId);
+        List<Option> options = optionRepository.getOptionByPopo(popoId);
         List<OptionContent> newContents = new ArrayList<>();
         List<OptionContentDTO> contents = new ArrayList<>();
         for (Option option : options) {
@@ -102,7 +101,7 @@ public class TrackerCrudService {
             contents.add(new OptionContentDTO(option, newContent));
         }
 
-        trackerContentDAO.saveAll(newContents);
+        trackerContentRepository.saveAll(newContents);
         DayResponse dayResponse = new DayResponse(newDay, contents);
         dayResponse.setUri(imageServerURI);
 
@@ -110,14 +109,14 @@ public class TrackerCrudService {
     }
 
     public String patchContents(Integer contentId, String contents) throws Exception {
-        OptionContent content = trackerContentDAO.findById(contentId)
+        OptionContent content = trackerContentRepository.findById(contentId)
                 .orElseThrow(NotFoundDataException::new);
 
         checker.checkEmpty(content);
         checker.checkPermission(content, 1);
 
         content.setContents(contents);
-        trackerContentDAO.save(content);
+        trackerContentRepository.save(content);
 
         return "";
     }
@@ -125,7 +124,7 @@ public class TrackerCrudService {
     public String patchImage(Integer dayId, MultipartFile image) throws Exception {
         FileUtil fileUtil = new FileUtil(rootPath);
 
-        Day day = trackerDAO.findById(dayId)
+        Day day = trackerRepository.findById(dayId)
                 .orElseThrow(NotFoundDataException::new);
 
         checker.checkPermission(day, 1);
@@ -133,7 +132,7 @@ public class TrackerCrudService {
         String preImagePath = day.getImage();
         String path = fileUtil.uploadFile(image, "day", 0);
         day.setImage(path);
-        trackerDAO.save(day);
+        trackerRepository.save(day);
         fileUtil.deleteFile(preImagePath);
 
         return imageServerURI + path;

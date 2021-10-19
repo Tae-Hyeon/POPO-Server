@@ -1,6 +1,7 @@
 package com.fortice.popo.global.util;
 
 import com.fortice.popo.domain.model.Day;
+import com.fortice.popo.domain.model.Option;
 import com.fortice.popo.domain.model.OptionContent;
 import com.fortice.popo.domain.model.Popo;
 import com.fortice.popo.global.error.exception.MultipartFileTypeRestrictException;
@@ -16,39 +17,43 @@ import java.util.Optional;
 @Component
 @NoArgsConstructor
 public class Checker {
-    public boolean checkOwner(int ownerId, int requestId) {
+    public static boolean checkOwner(int ownerId, int requestId) {
         if(ownerId == requestId)
             return true;
         return false;
     }
 
-    public String checkDateForm(int date) {
+    public static String checkDateForm(int date) {
         if(date > 9)
             return Integer.toString(date);
         return "0" + Integer.toString(date);
     }
 
-    public void checkEmpty(Object data) throws Exception{
+    public static void checkEmpty(Object data) throws Exception{
         if(data == null)
             throw new NotFoundDataException();
     }
 
-    public void checkPermission(Popo popo, int userId) throws Exception{
+    public static void checkPermission(Popo popo, int userId) throws Exception{
         if(!checkOwner(popo.getOwnerId(), userId))
             throw new NoPermissionException();
     }
+    public static void checkPermission(Option option, int userId) throws Exception{
+        if(!checkOwner(option.getOwnerId(), userId))
+            throw new NoPermissionException();
+    }
 
-    public void checkPermission(Day day, int userId) throws Exception{
+    public static void checkPermission(Day day, int userId) throws Exception{
         if(!checkOwner(day.getOwnerId(), userId))
             throw new NoPermissionException();
     }
 
-    public void checkPermission(OptionContent contents, int userId) throws Exception{
+    public static void checkPermission(OptionContent contents, int userId) throws Exception{
         if(!checkOwner(contents.getOwnerId(), userId))
             throw new NoPermissionException();
     }
 
-    public boolean checkFileType(MultipartFile file) throws Exception{
+    public static boolean checkFileType(MultipartFile file) throws Exception{
         String mimeType = file.getContentType();
         if(!mimeType.split("/")[0].equals("image"))
             throw new MultipartFileTypeRestrictException();
@@ -56,7 +61,7 @@ public class Checker {
         return true;
     }
 
-    public boolean checkFileType(List<MultipartFile> files) throws Exception{
+    public static boolean checkFileType(List<MultipartFile> files) throws Exception{
         for(MultipartFile file : files) {
             String mimeType = file.getContentType();
             if (!mimeType.split("/")[0].equals("image"))

@@ -1,7 +1,7 @@
 package com.fortice.popo;
 
-import com.fortice.popo.jpa.PopoDAOTest;
-import com.fortice.popo.jpa.TrackerDAOTest;
+import com.fortice.popo.jpa.PopoRepositoryTest;
+import com.fortice.popo.jpa.TrackerRepositoryTest;
 import com.fortice.popo.rest.PopoAPITest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -12,9 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @WebAppConfiguration
 class PopoApplicationTests {
-	PopoDAOTest popoJPATest;
+	PopoRepositoryTest popoJPATest;
 	PopoAPITest popoAPITest;
-	TrackerDAOTest trackerDAOTest;
+	TrackerRepositoryTest trackerDAOTest;
 	@Test
 	void contextLoads() throws Exception {
 		trackerDAOTest.getDayTest();

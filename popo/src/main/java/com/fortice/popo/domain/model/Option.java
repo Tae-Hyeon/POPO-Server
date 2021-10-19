@@ -1,5 +1,6 @@
 package com.fortice.popo.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -37,6 +38,7 @@ public class Option {
         System.out.println(order);
     }
 
+    @JsonIgnore
     public Integer getOwnerId(){
         return this.popo.getUser().getId();
     }

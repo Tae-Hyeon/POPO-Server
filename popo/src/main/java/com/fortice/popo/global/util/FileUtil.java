@@ -10,18 +10,15 @@ import java.util.List;
 
 @NoArgsConstructor
 public class FileUtil {
-    private static final Checker checker = new Checker();
-    private static final Formatter formatter = new Formatter();
-
     private static String rootPath;
 
-    public String uploadFile(MultipartFile file, String resource, int identifier) throws Exception{
+    public static String uploadFile(MultipartFile file, String resource, int identifier) throws Exception{
         if(file.isEmpty())
             return "";
 
-        checker.checkFileType(file);
+        Checker.checkFileType(file);
 
-        String path = formatter.getPathWithResourceAndFile(resource, new Date(), identifier, file.getOriginalFilename());
+        String path = Formatter.getPathWithResourceAndFile(resource, new Date(), identifier, file.getOriginalFilename());
         System.out.println(rootPath + path);
         File dest = new File(rootPath + path);
         file.transferTo(dest);
@@ -29,7 +26,7 @@ public class FileUtil {
         return path;
     }
 
-    public void deleteFile(String path) {
+    public static void deleteFile(String path) {
         File deleteFile = new File(rootPath + path);
 
         if(deleteFile.exists() && deleteFile.isFile()) {

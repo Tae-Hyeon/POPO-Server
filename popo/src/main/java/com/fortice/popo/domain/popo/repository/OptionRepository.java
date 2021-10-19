@@ -1,4 +1,4 @@
-package com.fortice.popo.domain.popo.dao;
+package com.fortice.popo.domain.popo.repository;
 
 import com.fortice.popo.domain.model.Option;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,7 +9,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface OptionDAO extends JpaRepository<Option, Integer> {
+public interface OptionRepository extends JpaRepository<Option, Integer> {
     @Query(value = "SELECT o FROM Option o WHERE o.popo.id=:popoId")
-    List<Option> getIdsByPopo(@Param("popoId") Integer popoId);
+    List<Option> getOptionByPopo(@Param("popoId") Integer popoId);
+
 }

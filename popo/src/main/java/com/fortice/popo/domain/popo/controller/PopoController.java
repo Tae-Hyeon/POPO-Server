@@ -1,6 +1,6 @@
-package com.fortice.popo.domain.popo.api;
+package com.fortice.popo.domain.popo.controller;
 
-import com.fortice.popo.domain.popo.application.PopoCrudService;
+import com.fortice.popo.domain.popo.service.PopoService;
 import com.fortice.popo.domain.popo.dto.PopoCreateRequest;
 import com.fortice.popo.global.common.response.Body;
 import io.swagger.annotations.Api;
@@ -22,9 +22,13 @@ import java.util.List;
 @Api("POPO API")
 @RestController
 @RequestMapping(value = "/popo", produces = {MediaType.APPLICATION_JSON_VALUE})
-public class popoAPI {
+public class PopoController {
+    private PopoService popoService;
+
     @Autowired
-    PopoCrudService popoCrudService;
+    public void setPopoService(PopoService popoService) {
+        this.popoService = popoService;
+    }
 
     /**
      * 포포 리스트 조회 API
@@ -35,7 +39,7 @@ public class popoAPI {
     @RequestMapping(method= RequestMethod.GET)
     public @ResponseBody ResponseEntity<Body> getPopoList() throws Exception {
         return ResponseEntity.ok(
-                makeBody(200, "포포 리스트 조회 성공", popoCrudService.getPopoList())
+                makeBody(200, "포포 리스트 조회 성공", popoService.getPopoList())
         );
     }
 
@@ -47,7 +51,7 @@ public class popoAPI {
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
         return new ResponseEntity(
-                makeBody(200, "포포 컨셉 세팅 완료", popoCrudService.setDefaultPopo(backgrounds)),
+                makeBody(200, "포포 컨셉 세팅 완료", popoService.setDefaultPopo(backgrounds)),
                 header,
                 HttpStatus.OK
         );
@@ -62,10 +66,20 @@ public class popoAPI {
             @Valid @RequestBody PopoCreateRequest request) throws Exception{
 
         return ResponseEntity.ok(
-                makeBody(200, "포포 설정 성공", popoCrudService.insertPopo(popoId, request))
+                makeBody(200, "포포 설정 성공", popoService.insertPopo(popoId, request))
         );
     }
 
+    @RequestMapping(path = "/{popoId}/option", method = RequestMethod.GET)
+    @ApiOperation(value = "포포 옵션 목록(날짜 추가 시 옵션 보기)")
+    public @ResponseBody ResponseEntity<Body> getOptions(
+            @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
+            @Pattern(regexp = "^[0-9]+", message = "숫자만 입력 가능합니다")
+            @PathVariable Integer popoId) throws Exception{
+        return ResponseEntity.ok(
+                makeBody(200, "포포 설정 성공", popoService.getOptions(popoId))
+        );
+    }
 //    @RequestMapping(path = "/{popoId}", method = RequestMethod.DELETE)
 //    // @ApiOperation(value = "포포 삭제")
 //    public @ResponseBody Response deletePopo(
@@ -86,7 +100,7 @@ public class popoAPI {
             @PathVariable("popoId") Integer popoId,
             @RequestPart MultipartFile background) throws Exception {
 
-        String url = popoCrudService.changeBackground(popoId, background);
+        String url = popoService.changeBackground(popoId, background);
         HttpHeaders header = new HttpHeaders();
         header.setContentType(MediaType.APPLICATION_JSON);
 

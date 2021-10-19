@@ -1,6 +1,6 @@
-package com.fortice.popo.domain.tracker.api;
+package com.fortice.popo.domain.tracker.controller;
 
-import com.fortice.popo.domain.tracker.application.TrackerCrudService;
+import com.fortice.popo.domain.tracker.service.TrackerService;
 import com.fortice.popo.domain.tracker.dto.CreateDayRequest;
 import com.fortice.popo.global.common.response.Body;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +17,9 @@ import javax.validation.constraints.Pattern;
 
 @RestController
 @RequestMapping(path = "/popo/{popoId}/tracker", produces = {MediaType.APPLICATION_JSON_VALUE})
-public class TrackerAPI {
+public class TrackerController {
     @Autowired
-    TrackerCrudService trackerCrudService;
+    TrackerService trackerService;
 
     @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody
@@ -34,7 +34,7 @@ public class TrackerAPI {
             @Pattern(regexp = "1[0-2]|[0][1-9]|[1-9]", message = "mm 형식만 입력 가능합니다")
             @RequestParam String month) throws Exception {
         return ResponseEntity.ok(
-                makeBody(200, "트래커 조회 성공", trackerCrudService.getTracker(popoId, year, month))
+                makeBody(200, "트래커 조회 성공", trackerService.getTracker(popoId, year, month))
         );
     }
 
@@ -48,7 +48,7 @@ public class TrackerAPI {
             @Pattern(regexp = "^[1-9]+", message = "숫자만 입력 가능합니다")
             @PathVariable Integer dayId) throws Exception {
         return ResponseEntity.ok(
-                makeBody(200, "데이터 조회 성공", trackerCrudService.getOneDay(popoId, dayId))
+                makeBody(200, "데이터 조회 성공", trackerService.getOneDay(popoId, dayId))
         );
     }
 
@@ -65,7 +65,7 @@ public class TrackerAPI {
         header.setContentType(MediaType.APPLICATION_JSON);
 
         return new ResponseEntity(
-                makeBody(200, "추가 완료", trackerCrudService.insertOneDay(popoId, request)),
+                makeBody(200, "추가 완료", trackerService.insertOneDay(popoId, request)),
                 header,
                 HttpStatus.OK
         );
@@ -80,7 +80,7 @@ public class TrackerAPI {
             @Valid @RequestBody String contents) throws Exception {
 
         return ResponseEntity.ok(
-                makeBody(200, "내용 수정 완료", trackerCrudService.patchContents(contentId, contents))
+                makeBody(200, "내용 수정 완료", trackerService.patchContents(contentId, contents))
         );
     }
 
@@ -96,7 +96,7 @@ public class TrackerAPI {
         header.setContentType(MediaType.APPLICATION_JSON);
 
         return new ResponseEntity(
-                makeBody(200, "이미지 수정 완료", trackerCrudService.patchImage(dayId, image)),
+                makeBody(200, "이미지 수정 완료", trackerService.patchImage(dayId, image)),
                 header,
                 HttpStatus.OK
         );

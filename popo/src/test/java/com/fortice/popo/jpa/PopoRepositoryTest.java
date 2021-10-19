@@ -1,36 +1,27 @@
 package com.fortice.popo.jpa;
 
 import com.fortice.popo.domain.model.Popo;
-import com.fortice.popo.domain.popo.dao.PopoDAO;
-import com.fortice.popo.domain.popo.dto.PopoCreateRequest;
+import com.fortice.popo.domain.popo.repository.PopoRepository;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @SpringBootTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class PopoDAOTest {
+public class PopoRepositoryTest {
 
     @Autowired
-    PopoDAO popoDAO;
+    PopoRepository popoRepository;
 
     @Test
     public void getListTest(){
         //given
-        List<Popo> popoList = popoDAO.findAll();
+        List<Popo> popoList = popoRepository.findAll();
 
         //when
         boolean status = popoList.isEmpty();
@@ -42,7 +33,7 @@ public class PopoDAOTest {
     }
 
     public void getPopoByIdTest(){
-        Optional<Popo> popo = popoDAO.findById(1);
+        Optional<Popo> popo = popoRepository.findById(1);
         Popo mockPopo = Popo.builder().id(1).build();
 
         //Assertions.assertEquals(mockPopo, popo);

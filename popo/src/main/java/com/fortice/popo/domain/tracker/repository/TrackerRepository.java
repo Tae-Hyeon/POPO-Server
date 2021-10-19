@@ -1,9 +1,8 @@
-package com.fortice.popo.domain.tracker.dao;
+package com.fortice.popo.domain.tracker.repository;
 
 import com.fortice.popo.domain.model.Day;
 import com.fortice.popo.domain.tracker.dto.DayDTO;
 import com.fortice.popo.domain.tracker.dto.DayResponse;
-import com.fortice.popo.domain.tracker.dto.TrackerResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface TrackerDAO extends JpaRepository<Day, Integer> {
+public interface TrackerRepository extends JpaRepository<Day, Integer> {
 
     @Query(value = "SELECT new com.fortice.popo.domain.tracker.dto.DayDTO("
             +" d.id, SUBSTRING(d.date, 9, 2), d.image)"
