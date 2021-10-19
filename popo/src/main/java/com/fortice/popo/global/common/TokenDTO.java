@@ -1,21 +1,17 @@
-package com.fortice.popo.domain.auth.dto;
+package com.fortice.popo.global.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
-
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TokenRequest {
-
-    @NotBlank
+public class TokenDTO {
+    private String grantType;
     private String accessToken;
-
-    @NotBlank
     private String refreshToken;
+    private Long accessTokenExpiresIn;
 }

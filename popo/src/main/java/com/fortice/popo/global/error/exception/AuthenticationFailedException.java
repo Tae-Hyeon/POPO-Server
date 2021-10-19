@@ -1,4 +1,6 @@
 package com.fortice.popo.global.error.exception;
 
-public class AuthenticationFailedException extends Exception{
+import javax.servlet.ServletException;
+
+public class AuthenticationFailedException extends ServletException {
 }

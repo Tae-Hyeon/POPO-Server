@@ -1,8 +1,6 @@
-package com.fortice.popo.domain.user.dto;
+package com.fortice.popo.domain.auth.dto;
 
-import com.fortice.popo.domain.model.User;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

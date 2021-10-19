@@ -1,4 +1,4 @@
-package com.fortice.popo.domain.user.dto;
+package com.fortice.popo.domain.auth.dto;
 
 import com.fortice.popo.domain.model.User;
 import lombok.AllArgsConstructor;
@@ -26,6 +26,7 @@ public class SignUpRequest {
                 .email(this.email)
                 .password(passwordEncoder.encode(this.password))
                 .phone(this.phone)
+                .authority(User.Authority.ROLE_USER)
                 .build();
     }
 }

@@ -1,4 +1,4 @@
-package com.fortice.popo.domain.user.repository;
+package com.fortice.popo.domain.auth.repository;
 
 import com.fortice.popo.domain.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;

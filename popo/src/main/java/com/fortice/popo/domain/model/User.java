@@ -7,6 +7,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -30,9 +31,9 @@ public class User {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @JsonIgnore
-    @Column(name = "salt", nullable = false)
-    private String salt;
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private Authority authority;
 
     private String phone;
 
@@ -45,4 +46,21 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     @UpdateTimestamp
     private Date updatedAt;
+
+    public enum Authority {
+        ROLE_USER, ROLE_ADMIN
+    }
+
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+        this.authority = Authority.ROLE_USER;
+    }
+
+    public User(String email, String password, String phone) {
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+        this.authority = Authority.ROLE_USER;
+    }
 }

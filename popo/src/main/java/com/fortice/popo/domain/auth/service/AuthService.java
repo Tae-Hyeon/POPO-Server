@@ -1,16 +1,16 @@
-package com.fortice.popo.domain.user.service;
+package com.fortice.popo.domain.auth.service;
 
 import com.fortice.popo.domain.model.RefreshToken;
 import com.fortice.popo.domain.model.User;
-import com.fortice.popo.domain.user.dto.SignInRequest;
-import com.fortice.popo.domain.user.dto.SignUpRequest;
-import com.fortice.popo.domain.user.dto.TokenRequest;
-import com.fortice.popo.domain.user.repository.UserRepository;
+import com.fortice.popo.domain.auth.dto.SignInRequest;
+import com.fortice.popo.domain.auth.dto.SignUpRequest;
+import com.fortice.popo.domain.auth.dto.TokenRequest;
+import com.fortice.popo.domain.auth.repository.UserRepository;
 import com.fortice.popo.global.common.TokenDTO;
 import com.fortice.popo.global.error.exception.AlreadyCreatedException;
 import com.fortice.popo.global.error.exception.NotFoundDataException;
 import com.fortice.popo.global.error.exception.TokenValidFailedException;
-import com.fortice.popo.domain.user.repository.RefreshTokenRepository;
+import com.fortice.popo.domain.auth.repository.RefreshTokenRepository;
 import com.fortice.popo.global.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 
@@ -24,7 +24,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class AuthService {
     private final TokenProvider tokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final PasswordEncoder passwordEncoder;
@@ -52,7 +52,7 @@ public class UserService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        TokenDTO tokenDTO = tokenProvider.generateTokenDto(authentication);
+        TokenDTO tokenDTO = tokenProvider.generateTokenDTO(authentication);
 
         // 4. RefreshToken 저장
         RefreshToken refreshToken = RefreshToken.builder()
@@ -86,7 +86,7 @@ public class UserService {
         }
 
         // 5. 새로운 토큰 생성
-        TokenDTO tokenDTO = tokenProvider.generateTokenDto(authentication);
+        TokenDTO tokenDTO = tokenProvider.generateTokenDTO(authentication);
 
         // 6. 저장소 정보 업데이트
         refreshToken.updateValue(tokenDTO.getRefreshToken());
