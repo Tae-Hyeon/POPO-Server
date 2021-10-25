@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface OptionRepository extends JpaRepository<Option, Integer> {
-    @Query(value = "SELECT o FROM Option o WHERE o.popo.id=:popoId")
+    @Query(value = "SELECT o FROM Option o WHERE o.popo.id=:popoId ORDER BY o.order")
     List<Option> getOptionByPopo(@Param("popoId") Integer popoId);
 
 }

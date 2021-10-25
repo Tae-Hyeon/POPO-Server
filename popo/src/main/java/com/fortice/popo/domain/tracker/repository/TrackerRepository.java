@@ -34,5 +34,10 @@ public interface TrackerRepository extends JpaRepository<Day, Integer> {
             +" d.date=:date")
     Optional<Day> findByPopoIdAndDate(Integer popoId, Date date);
 
+    @Query(value = "SELECT d"
+            +" FROM Day d"
+            +" WHERE d.id = :dayId")
+    Optional<Day> findByDayId(Integer dayId);
+
     Optional<Day> findByDate(Date date);
 }

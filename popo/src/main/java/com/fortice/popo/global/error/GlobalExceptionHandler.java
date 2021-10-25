@@ -104,6 +104,7 @@ public class GlobalExceptionHandler {
         return errorResponse;
     }
 
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     protected ErrorResponse handleException(Exception e) {

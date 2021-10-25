@@ -17,6 +17,7 @@ public class Option {
     @Column(name = "id")
     private Integer id;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "popo_id")
     private Popo popo;

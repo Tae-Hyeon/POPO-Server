@@ -3,6 +3,7 @@ package com.fortice.popo.domain.tracker.controller;
 import com.fortice.popo.domain.tracker.service.TrackerService;
 import com.fortice.popo.domain.tracker.dto.CreateDayRequest;
 import com.fortice.popo.global.common.response.Body;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -15,11 +16,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
+@RequiredArgsConstructor
 @RestController
 @RequestMapping(path = "/popo/{popoId}/tracker", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class TrackerController {
-    @Autowired
-    TrackerService trackerService;
+    private final TrackerService trackerService;
 
     @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody
@@ -68,6 +69,17 @@ public class TrackerController {
                 makeBody(200, "추가 완료", trackerService.insertOneDay(popoId, request)),
                 header,
                 HttpStatus.OK
+        );
+    }
+
+    @RequestMapping(path = "/{dayId}", method = RequestMethod.DELETE)
+    public @ResponseBody
+    ResponseEntity<Body> deleteOneDay(
+            @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
+            @Pattern(regexp = "^[0-9]+", message = "숫자만 입력 가능합니다")
+            @PathVariable Integer dayId) throws Exception {
+        return ResponseEntity.ok(
+                makeBody(200, "삭제 완료", trackerService.deleteOneDay(dayId))
         );
     }
 
