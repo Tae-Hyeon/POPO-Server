@@ -24,10 +24,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 public class PopoService {
-    @Autowired
-    private PopoRepository popoRepository;
-    @Autowired
-    private OptionRepository optionRepository;
+    private final PopoRepository popoRepository;
+    private final OptionRepository optionRepository;
 
     @Value("${uri.image-server}")
     private String imageServerURI;

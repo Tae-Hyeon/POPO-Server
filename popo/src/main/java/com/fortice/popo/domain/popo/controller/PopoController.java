@@ -6,6 +6,7 @@ import com.fortice.popo.global.common.response.Body;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,15 +21,11 @@ import javax.validation.constraints.Pattern;
 import java.util.List;
 
 @Api("POPO API")
+@RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/popo", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class PopoController {
-    private PopoService popoService;
-
-    @Autowired
-    public void setPopoService(PopoService popoService) {
-        this.popoService = popoService;
-    }
+    private final PopoService popoService;
 
     /**
      * 포포 리스트 조회 API

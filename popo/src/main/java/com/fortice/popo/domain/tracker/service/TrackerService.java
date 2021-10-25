@@ -10,6 +10,7 @@ import com.fortice.popo.global.error.exception.NotFoundDataException;
 import com.fortice.popo.global.util.Checker;
 import com.fortice.popo.global.util.FileUtil;
 import com.fortice.popo.global.util.Formatter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -22,33 +23,26 @@ import java.util.Date;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 @Transactional
 public class TrackerService {
-    @Autowired
-    private PopoRepository popoRepository;
-    @Autowired
-    private OptionRepository optionRepository;
-    @Autowired
-    private TrackerRepository trackerRepository;
-    @Autowired
-    private TrackerContentRepository trackerContentRepository;
+    private final PopoRepository popoRepository;
+    private final OptionRepository optionRepository;
+    private final TrackerRepository trackerRepository;
+    private final TrackerContentRepository trackerContentRepository;
 
     @Value("${uri.image-server}")
     private String imageServerURI;
     @Value("${path.root}")
     private String rootPath;
 
-    //TODO:
-    private static final Checker checker = new Checker();
-    private static final Formatter formatter = new Formatter();
-
     public TrackerResponse getTracker(Integer popoId, String year, String month) throws Exception {
 
         Popo popo = popoRepository.findById(popoId)
                 .orElseThrow(NotFoundDataException::new);
-        checker.checkPermission(popo, 1);
+        Checker.checkPermission(popo, 1);
 
-        String dateFormat = formatter.getDateFormatByYearAndMonth(year, month);
+        String dateFormat = Formatter.getDateFormatByYearAndMonth(year, month);
         List<DayDTO> tracker = trackerRepository.getDayDTOById(popoId, dateFormat);
         for (DayDTO day : tracker)
             day.setUri(imageServerURI);
@@ -65,7 +59,7 @@ public class TrackerService {
     public DayResponse getOneDay(Integer popoId, Integer dayId) throws Exception {
         //TODO 유저 확인 과정 필요
         List<OptionContentDTO> options = trackerContentRepository.findOptionsByDayId(dayId);
-        checker.checkEmpty(options);
+        Checker.checkEmpty(options);
 
         DayResponse dayResponse = trackerRepository.getDayResponseById(dayId);
 
@@ -112,8 +106,8 @@ public class TrackerService {
         OptionContent content = trackerContentRepository.findById(contentId)
                 .orElseThrow(NotFoundDataException::new);
 
-        checker.checkEmpty(content);
-        checker.checkPermission(content, 1);
+        Checker.checkEmpty(content);
+        Checker.checkPermission(content, 1);
 
         content.setContents(contents);
         trackerContentRepository.save(content);
@@ -127,7 +121,7 @@ public class TrackerService {
         Day day = trackerRepository.findById(dayId)
                 .orElseThrow(NotFoundDataException::new);
 
-        checker.checkPermission(day, 1);
+        Checker.checkPermission(day, 1);
 
         String preImagePath = day.getImage();
         String path = fileUtil.uploadFile(image, "day", 0);

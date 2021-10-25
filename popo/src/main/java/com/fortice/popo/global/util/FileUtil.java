@@ -17,8 +17,8 @@ public class FileUtil {
             return "";
 
         Checker.checkFileType(file);
-
-        String path = Formatter.getPathWithResourceAndFile(resource, new Date(), identifier, file.getOriginalFilename());
+        String filename = file.getOriginalFilename().replace(' ', '_').;
+        String path = Formatter.getPathWithResourceAndFile(resource, new Date(), identifier, filename);
         System.out.println(rootPath + path);
         File dest = new File(rootPath + path);
         file.transferTo(dest);

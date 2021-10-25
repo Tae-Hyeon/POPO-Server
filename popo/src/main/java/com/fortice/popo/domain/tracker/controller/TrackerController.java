@@ -3,6 +3,7 @@ package com.fortice.popo.domain.tracker.controller;
 import com.fortice.popo.domain.tracker.service.TrackerService;
 import com.fortice.popo.domain.tracker.dto.CreateDayRequest;
 import com.fortice.popo.global.common.response.Body;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -16,10 +17,10 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping(path = "/popo/{popoId}/tracker", produces = {MediaType.APPLICATION_JSON_VALUE})
 public class TrackerController {
-    @Autowired
-    TrackerService trackerService;
+    private final TrackerService trackerService;
 
     @RequestMapping(method = RequestMethod.GET)
     public @ResponseBody
