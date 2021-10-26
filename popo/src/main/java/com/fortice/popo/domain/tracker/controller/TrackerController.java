@@ -1,8 +1,10 @@
 package com.fortice.popo.domain.tracker.controller;
 
+import com.fortice.popo.domain.tracker.dto.PatchContentDTO;
 import com.fortice.popo.domain.tracker.service.TrackerService;
 import com.fortice.popo.domain.tracker.dto.CreateDayRequest;
 import com.fortice.popo.global.common.response.Body;
+import io.swagger.models.auth.In;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -14,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 @RequiredArgsConstructor
@@ -56,19 +59,10 @@ public class TrackerController {
     //TODO: insert 시 생성된 id값만 response로 보내주고, 조회는 다시 API를 호출하도록 만들어야함
     @RequestMapping(method = RequestMethod.POST, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public @ResponseBody
-    ResponseEntity<Body> insertOneDay(
-            @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
-            @Pattern(regexp = "^[0-9]+", message = "숫자만 입력 가능합니다")
-            @PathVariable Integer popoId,
-            @Valid @ModelAttribute("request") CreateDayRequest request) throws Exception {
+    ResponseEntity<Body> insertOneDay(@Valid @ModelAttribute("request") CreateDayRequest request) throws Exception {
 
-        HttpHeaders header = new HttpHeaders();
-        header.setContentType(MediaType.APPLICATION_JSON);
-
-        return new ResponseEntity(
-                makeBody(200, "추가 완료", trackerService.insertOneDay(popoId, request)),
-                header,
-                HttpStatus.OK
+        return ResponseEntity.ok(
+                makeBody(200, "추가 완료", trackerService.insertOneDay(request))
         );
     }
 
@@ -89,10 +83,10 @@ public class TrackerController {
             @Valid @Min(value = 1, message = "요청 url의 최소값은 1입니다.")
             @Pattern(regexp = "^[0-9]+", message = "숫자만 입력 가능합니다")
             @PathVariable Integer contentId,
-            @Valid @RequestBody String contents) throws Exception {
+            @RequestBody PatchContentDTO contentDTO) throws Exception {
 
         return ResponseEntity.ok(
-                makeBody(200, "내용 수정 완료", trackerService.patchContents(contentId, contents))
+                makeBody(200, "내용 수정 완료", trackerService.patchContents(contentId, contentDTO.getContents()))
         );
     }
 

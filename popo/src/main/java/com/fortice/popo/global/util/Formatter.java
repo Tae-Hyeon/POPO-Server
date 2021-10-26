@@ -27,7 +27,7 @@ public class Formatter {
         LocalDate now = LocalDate.now();
 
         String y = year.isBlank() ? Checker.checkDateForm(now.getYear()) : year;
-        String m = month.isBlank() ? Checker.checkDateForm(now.getMonthValue()) : month;
+        String m = month.isBlank() ? Checker.checkDateForm(now.getMonthValue()) : Checker.checkDateForm(month);
 
         return y + "-" + m;
     }

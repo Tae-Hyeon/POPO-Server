@@ -1,6 +1,8 @@
 package com.fortice.popo.global.util;
 
+import com.fortice.popo.global.common.GlobalValue;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,24 +12,20 @@ import java.util.List;
 
 @NoArgsConstructor
 public class FileUtil {
-    private static String rootPath;
-
     public static String uploadFile(MultipartFile file, String resource, int identifier) throws Exception{
         if(file.isEmpty())
             return "";
-
         Checker.checkFileType(file);
 
         String path = Formatter.getPathWithResourceAndFile(resource, new Date(), identifier, file.getOriginalFilename());
-        System.out.println(rootPath + path);
-        File dest = new File(rootPath + path);
+        File dest = new File(GlobalValue.getRootPath() + path);
         file.transferTo(dest);
 
         return path;
     }
 
     public static void deleteFile(String path) {
-        File deleteFile = new File(rootPath + path);
+        File deleteFile = new File(GlobalValue.getRootPath() + path);
 
         if(deleteFile.exists() && deleteFile.isFile()) {
             if(deleteFile.delete())
@@ -37,9 +35,5 @@ public class FileUtil {
                 System.out.println(deleteFile.getPath() + "사진 삭제 실패");
             }
         }
-    }
-
-    public FileUtil(String rootPath) {
-        this.rootPath = rootPath;
     }
 }

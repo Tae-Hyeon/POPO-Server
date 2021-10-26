@@ -26,7 +26,6 @@ public class CreateDayRequest {
 
     @ApiModelProperty(example = "2")
     @ApiParam(value = "포포 id")
-    @NotNull
     private Integer popoId;
 
     @ApiModelProperty(example = "2029-09-20")

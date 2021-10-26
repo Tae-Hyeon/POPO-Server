@@ -13,6 +13,5 @@ public class CreateContentDTO {
     @NotNull
     private Integer optionId;
 
-    @NotNull //생성은 null은 아니지만 ""로 비어있을 수 있다.
     private String contents;
 }

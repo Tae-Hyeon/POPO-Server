@@ -29,6 +29,12 @@ public class Checker {
         return "0" + Integer.toString(date);
     }
 
+    public static String checkDateForm(String date) {
+        if(date.length() == 2)
+            return date;
+        return "0" + date;
+    }
+
     public static void checkEmpty(Object data) throws Exception{
         if(data == null)
             throw new NotFoundDataException();
