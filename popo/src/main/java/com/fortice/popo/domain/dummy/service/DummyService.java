@@ -35,7 +35,6 @@ public class DummyService {
         Popo popo = Popo.builder().id(request.getPopoId()).build();
         List<Integer> lengthOfOption = List.of(4, 3, 3, 3, 2, 3, 3, 4);
         List<Option> options = optionRepository.getOptionByPopo(request.getPopoId());
-        FileUtil fileUtil = new FileUtil("C:/Users/hanth/OneDrive/Desktop/POPO-Server/popo/image");
 
         for(int i = 1; i <= maxDay; i++)
         {

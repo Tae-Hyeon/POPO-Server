@@ -34,7 +34,7 @@ public class AuthService {
     @Transactional
     public String signup(SignUpRequest request) throws Exception{
         User user = request.toUser(passwordEncoder);
-        Optional<User> opUser = userRepository.findUserByEmail(request.getEmail());
+        Optional<User> opUser = userRepository.findByEmail(request.getEmail());
         if (opUser.isPresent()) {
             //log.error("이미 존재하는 유저입니다.");
             throw new AlreadyCreatedException();
@@ -102,7 +102,7 @@ public class AuthService {
     }
 
     private boolean checkEmail(String email) throws Exception{
-        Optional<User> user = userRepository.findUserByEmail(email);
+        Optional<User> user = userRepository.findByEmail(email);
         if (user.isPresent()) { throw new AlreadyCreatedException(); }
         return true;
     }

@@ -11,6 +11,7 @@ import com.fortice.popo.global.error.exception.NotFoundDataException;
 import com.fortice.popo.global.util.Checker;
 import com.fortice.popo.global.util.FileUtil;
 import com.fortice.popo.global.util.Formatter;
+import com.fortice.popo.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -35,14 +36,13 @@ public class TrackerService {
     public TrackerResponse getTracker(Integer popoId, String year, String month) throws Exception {
         Popo popo = popoRepository.findById(popoId)
                 .orElseThrow(NotFoundDataException::new);
-        Checker.checkPermission(popo, 1);
+        Checker.checkPermission(popo, SecurityUtil.getCurrentUserId());
 
         String dateFormat = Formatter.getDateFormatByYearAndMonth(year, month);
         List<DayDTO> tracker = trackerRepository.getDayDTOById(popoId, dateFormat);
         for (DayDTO day : tracker)
             day.setUri(GlobalValue.getImageServerURI());
-
-        String background_url = popo.getTracker_image().isBlank() ? "" : GlobalValue.getImageServerURI() + popo.getTracker_image();
+        String background_url = popo.getTracker_image().isEmpty() ? "" : GlobalValue.getImageServerURI() + popo.getTracker_image();
         TrackerResponse trackerResponse = TrackerResponse.builder()
                 .category(popo.getCategory())
                 .background(background_url)
@@ -53,7 +53,6 @@ public class TrackerService {
     }
 
     public DayResponse getOneDay(Integer popoId, Integer dayId) throws Exception {
-        //TODO 유저 확인 과정 필요
         List<OptionContentDTO> options = trackerContentRepository.findOptionsByDayId(dayId);
         Checker.checkEmpty(options);
 
@@ -66,10 +65,9 @@ public class TrackerService {
     }
 
     public String deleteOneDay(Integer dayId) throws Exception {
-        //TODO 유저 확인 과정 필요
         Day day = trackerRepository.findByDayId(dayId)
                 .orElseThrow(NotFoundDataException::new);
-        Checker.checkPermission(day, 1);
+        Checker.checkPermission(day, SecurityUtil.getCurrentUserId());
         trackerRepository.delete(day);
         return "";
     }
@@ -106,7 +104,7 @@ public class TrackerService {
         OptionContent content = trackerContentRepository.findById(contentId)
                 .orElseThrow(NotFoundDataException::new);
 
-        Checker.checkPermission(content, 1);
+        Checker.checkPermission(content, SecurityUtil.getCurrentUserId());
 
         content.setContents(contents);
         trackerContentRepository.save(content);
@@ -118,7 +116,7 @@ public class TrackerService {
         Day day = trackerRepository.findById(dayId)
                 .orElseThrow(NotFoundDataException::new);
 
-        Checker.checkPermission(day, 1);
+        Checker.checkPermission(day, SecurityUtil.getCurrentUserId());
 
         String preImagePath = day.getImage();
         String path = FileUtil.uploadFile(image, "day", 0);

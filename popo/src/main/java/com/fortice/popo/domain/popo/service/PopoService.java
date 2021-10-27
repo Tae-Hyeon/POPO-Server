@@ -11,6 +11,7 @@ import com.fortice.popo.global.common.GlobalValue;
 import com.fortice.popo.global.error.exception.NotFoundDataException;
 import com.fortice.popo.global.util.Checker;
 import com.fortice.popo.global.util.FileUtil;
+import com.fortice.popo.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,7 +41,7 @@ public class PopoService {
         Popo popo = popoRepository.findById(popoId)
                 .orElseThrow(NotFoundDataException::new);
 
-        Checker.checkPermission(popo, 1);
+        Checker.checkPermission(popo, SecurityUtil.getCurrentUserId());
 
         return popo;
     }
@@ -72,7 +73,7 @@ public class PopoService {
         Popo newPopo = popoRepository.findById(popoId)
                 .orElseThrow(NotFoundDataException::new);
 
-        Checker.checkPermission(newPopo, 1);
+        Checker.checkPermission(newPopo, SecurityUtil.getCurrentUserId());
 
         newPopo.setCategory(request.getCategory());
         newPopo = popoRepository.save(newPopo);
@@ -87,7 +88,7 @@ public class PopoService {
     public List<Option> getOptions(Integer popoId) throws Exception {
         List<Option> options = optionRepository.getOptionByPopo(popoId);
 
-        Checker.checkPermission(options.get(0), 1);
+        Checker.checkPermission(options.get(0), SecurityUtil.getCurrentUserId());
 
         return options;
     }
@@ -96,7 +97,7 @@ public class PopoService {
 //        Popo popo = popoDAO.findById(popoId)
 //                .orElseThrow(NotFoundDataException::new);
 //
-//        checker.checkPermission(popo, 1);
+//        checker.checkPermission(popo, SecurityUtil.getCurrentUserId());
 //        popoDAO.deleteById(popoId);
 //
 //        popo.setCategory(-1);
@@ -108,7 +109,7 @@ public class PopoService {
     public String changeBackground(Integer popoId, MultipartFile background) throws Exception {
         Popo popo = popoRepository.findById(popoId)
                 .orElseThrow(NotFoundDataException::new);
-        Checker.checkPermission(popo, 1);
+        Checker.checkPermission(popo,SecurityUtil.getCurrentUserId());
 
         String preImagePath = popo.getTracker_image();
         String path = FileUtil.uploadFile(background, "tracker", 0);
