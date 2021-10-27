@@ -29,7 +29,8 @@ public class DayResponse {
 
     public void setUri(String uri)
     {
-        this.image = uri + this.image;
+        if(!this.image.isBlank())
+            this.image = uri + this.image;
     }
 
     public DayResponse(Day day, List<OptionContentDTO> options)

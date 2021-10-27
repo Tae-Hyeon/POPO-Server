@@ -22,7 +22,8 @@ public class DayDTO {
     private String image;
 
     public void setUri(String uri) {
-        this.image = uri + this.image;
+        if(!this.image.isBlank())
+            this.image = uri + this.image;
     }
 
     public DayDTO(Integer id, String date, String image) {

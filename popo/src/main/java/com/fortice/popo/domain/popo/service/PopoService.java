@@ -7,6 +7,7 @@ import com.fortice.popo.domain.popo.repository.OptionRepository;
 import com.fortice.popo.domain.popo.repository.PopoRepository;
 import com.fortice.popo.domain.popo.dto.PopoCreateRequest;
 import com.fortice.popo.domain.popo.dto.PopoDTO;
+import com.fortice.popo.global.common.GlobalValue;
 import com.fortice.popo.global.error.exception.NotFoundDataException;
 import com.fortice.popo.global.util.Checker;
 import com.fortice.popo.global.util.FileUtil;
@@ -27,15 +28,10 @@ public class PopoService {
     private final PopoRepository popoRepository;
     private final OptionRepository optionRepository;
 
-    @Value("${uri.image-server}")
-    private String imageServerURI;
-    @Value("${path.root}")
-    private String rootPath;
-
     public List<PopoDTO> getPopoList() throws Exception {
         List<PopoDTO> popoList = popoRepository.findPoposByUserId(1);
         for (PopoDTO popo : popoList)
-            popo.setUri(imageServerURI);
+            popo.setUri(GlobalValue.getImageServerURI());
 
         return popoList;
     }
@@ -50,21 +46,20 @@ public class PopoService {
     }
 
     public List<PopoDTO> setDefaultPopo(List<MultipartFile> backgrounds) throws Exception {
-        FileUtil fileUtil = new FileUtil(rootPath);
         List<Popo> newPopos = new ArrayList<>();
         List<PopoDTO> popoResponse = new ArrayList<>();
 
         for (int i = 1; i <= 12; i++) {
             Popo popo = Popo.builder()
                     //.conceptId(1)
-                    .background(fileUtil.uploadFile(backgrounds.get(i - 1), "popo", i))
+                    .background(FileUtil.uploadFile(backgrounds.get(i - 1), "popo", i))
                     .category(-1)
                     .order(i)
                     .user(User.builder().id(1).build())
                     .build();
 
             //TODO: new
-            popoResponse.add(new PopoDTO(popo, imageServerURI));
+            popoResponse.add(new PopoDTO(popo, GlobalValue.getImageServerURI()));
             newPopos.add(popo);
         }
 
@@ -86,7 +81,7 @@ public class PopoService {
             optionRepository.saveAll(newOptions);
         }
         //TODO: new
-        return new PopoDTO(newPopo, imageServerURI);
+        return new PopoDTO(newPopo, GlobalValue.getImageServerURI());
     }
 
     public List<Option> getOptions(Integer popoId) throws Exception {
@@ -115,13 +110,13 @@ public class PopoService {
                 .orElseThrow(NotFoundDataException::new);
         Checker.checkPermission(popo, 1);
 
-        FileUtil fileUtil = new FileUtil(rootPath);
         String preImagePath = popo.getTracker_image();
-        String path = fileUtil.uploadFile(background, "tracker", 0);
+        String path = FileUtil.uploadFile(background, "tracker", 0);
         popo.setTracker_image(path);
         popoRepository.save(popo);
-        fileUtil.deleteFile(preImagePath);
-
-        return imageServerURI + path;
+        FileUtil.deleteFile(preImagePath);
+        if(path.equals(""))
+            return "";
+        return GlobalValue.getImageServerURI() + path;
     }
 }
